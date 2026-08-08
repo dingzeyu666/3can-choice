@@ -181,7 +181,7 @@
   <h1>三餐签筒</h1>
   <div class="sub">今日宜食 · 抽一支好签</div>
   <div class="date-chip" id="dateChip"></div>
-  <div style="margin-top:8px;font-size:11px;color:rgba(176,141,87,.75);letter-spacing:2px">v9</div>
+  <div style="margin-top:8px;font-size:11px;color:rgba(176,141,87,.75);letter-spacing:2px">v10</div>
 </div>
 
 <div class="wrap">
@@ -465,7 +465,7 @@ function dishBlocksHTML(slot, d){
   items.forEach(function(it, i){
     var on = (openDish[slot] === i);
     html += '<div class="dish-wrap">' +
-      '<span class="dish-block' + (on?' on':'') + '" onclick="toggleDish(\''+slot+'\','+i+')">' + esc(it.n) + '</span>' +
+      '<span class="dish-block' + (on?' on':'') + '"' + (i===0?' id="name-'+slot+'"':'') + ' onclick="toggleDish(\''+slot+'\','+i+')">' + esc(it.n) + '</span>' +
       '<div class="dish-recipe' + (on?' open':'') + '">' + (it.main?'<b>做法</b> ':'<b>做法</b> ') + esc(it.r) + '</div>' +
     '</div>';
   });
@@ -487,11 +487,10 @@ function cardHTML(s){
       '<div class="meal-ico">' + icoOf(s) + '</div>' +
       '<div class="meal-info">' +
         '<div class="meal-time">' + slotOf(s) + '</div>' +
-        (d ? '<div class="meal-name" id="name-'+s+'">' + esc(d.n) + '</div>' : '<div class="meal-name rolling" id="name-'+s+'">待抽</div>') +
       '</div>' +
       '<button class="slot-btn' + (d?' on':'') + '" id="slot-'+s+'" onclick="drawSlot(\''+s+'\')" title="'+(d?'重抽':'抽取')+'这一餐">↻</button>' +
     '</div>' +
-    (d ? dishBlocksHTML(s, d) : '<div class="meal-side" style="font-size:12px;color:var(--muted);margin-top:8px">配菜 · 营养 · 做法 抽签后揭晓</div>') +
+    (d ? dishBlocksHTML(s, d) : '<div class="dish-blocks"><div class="dish-wrap"><span class="dish-block rolling" id="name-'+s+'">待抽</span></div></div>') +
     (d ? '<div class="nu-chips">' + chips + '</div>' : '') +
   '</div>';
 }
@@ -610,7 +609,7 @@ function shareToday(){
   });
 }
 function buildShareImage(list, cb){
-  var W = 750, H = 1120;
+  var W = 750, H = 1500;
   var cv = document.createElement("canvas");
   cv.width = W; cv.height = H;
   var ctx = cv.getContext("2d");
@@ -638,36 +637,36 @@ function buildShareImage(list, cb){
   list.forEach(function(item){
     var d = item.d;
     ctx.fillStyle = "rgba(255,255,255,.85)";
-    roundRect(ctx, 52, y, W-104, 172, 24);
+    roundRect(ctx, 52, y, W-104, 150, 24);
     ctx.fill();
     ctx.strokeStyle = "rgba(176,141,87,.45)";
     ctx.lineWidth = 2;
-    roundRect(ctx, 52, y, W-104, 172, 24);
+    roundRect(ctx, 52, y, W-104, 150, 24);
     ctx.stroke();
     ctx.textAlign = "left";
-    ctx.font = "30px 'PingFang SC','Microsoft YaHei'";
-    ctx.fillText(icoOf(item.slot) + " " + slotOf(item.slot), 82, y + 48);
+    ctx.font = "28px 'PingFang SC','Microsoft YaHei'";
+    ctx.fillText(icoOf(item.slot) + " " + slotOf(item.slot), 82, y + 44);
     ctx.fillStyle = "#2e2a33";
-    ctx.font = "bold 38px 'Noto Serif SC','Songti SC','Microsoft YaHei',serif";
-    ctx.fillText(d.n, 82, y + 104);
+    ctx.font = "bold 36px 'Noto Serif SC','Songti SC','Microsoft YaHei',serif";
+    ctx.fillText(d.n, 82, y + 100);
     ctx.fillStyle = "#6b5f6e";
-    ctx.font = "26px 'PingFang SC','Microsoft YaHei'";
-    ctx.fillText(d.s, 82, y + 148);
-    y += 196;
+    ctx.font = "25px 'PingFang SC','Microsoft YaHei'";
+    ctx.fillText(d.s, 82, y + 138);
+    y += 176;
   });
   ctx.textAlign = "center";
   ctx.fillStyle = "#8a8090";
   ctx.font = "24px 'PingFang SC','Microsoft YaHei'";
-  ctx.fillText("扫码或长按复制链接,查看每道菜的做法", W/2, H - 160);
+  ctx.fillText("扫码查看每道菜的做法", W/2, 1080);
   try{
     var qr = qrcode(0, "M");
     var url = location.href;
     qr.addData(url);
     qr.make();
-    var qs = 6, qm = 12;
+    var qs = 5, qm = 14;
     var qsize = qs * (qr.getModuleCount() + qm);
     var qx = (W - qsize) / 2;
-    var qy = H - 150 - qsize;
+    var qy = H - qsize - 60;
     ctx.fillStyle = "#fff";
     ctx.fillRect(qx, qy, qsize, qsize);
     ctx.fillStyle = "#2e2a33";
