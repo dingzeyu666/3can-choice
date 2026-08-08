@@ -395,13 +395,14 @@ function doDraw(){
   var h = usedPool();
   var picked = {};
   slots.forEach(function(s){ picked[s] = pick(s, h[s]); });
+  var tick = 0;
   var timer = setInterval(function(){
     slots.forEach(function(s){
       var el = document.getElementById("name-"+s);
       if (el) el.textContent = MEALS[s][Math.floor(Math.random()*MEALS[s].length)].n;
     });
-    if (++window._tick >= 12){
-      window._tick = 0;
+    tick++;
+    if (tick >= 12){
       clearInterval(timer);
       btn.classList.remove("shaking");
       slots.forEach(function(s){
