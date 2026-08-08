@@ -228,7 +228,7 @@
     <button class="btn btn-ghost" onclick="redrawAll()">🔄 全部重抽</button>
   </div>
   <div class="tip" id="drawTip"></div>
-  <button class="share-btn" onclick="shareToday()">📤 分享今日签运</button>
+  <button class="share-btn" onclick="shareToday()">📤 分享今日食谱</button>
 </div>
 
 <div class="view" id="viewToday">
@@ -248,10 +248,7 @@
   <div class="tip">🗓 点击任意日期查看当天定数菜单;金色高亮为今天。抽签结果与定数互不影响。</div>
 </div>
 
-<div class="footer">
-  <div class="sign">♎ 天秤座的平衡之道 · 每日一签 · 30 天不重样 ♎</div>
-  收藏本链接,今日签运会留在手机里 · <b id="pageUrl"></b>
-</div>
+
 
 <script>
 var MEALS = {
@@ -521,7 +518,6 @@ function shareToday(){
     prompt("复制签文:", txt);
   }
 }
-document.getElementById("pageUrl").textContent = location.href;
 renderHeader();
 renderDrawView();
 </script>
