@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ff8a3d">
+<meta name="description" content="今天吃什么?30天三餐不重复菜单">
+<title>今天吃什么 · 30天不重复</title>
+<style>
+  :root{
+    --bg:#fff7f0; --card:#ffffff; --primary:#ff7a2f; --primary-soft:#ffe8d6;
+    --text:#3d2c23; --muted:#9a8577; --line:#f3e4d6;
+    --radius:20px; --shadow:0 8px 24px rgba(255,122,47,.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    background:var(--bg); color:var(--text); min-height:100vh;
+    padding-bottom:calc(24px + env(safe-area-inset-bottom));
+  }
+  .header{
+    background:linear-gradient(135deg,#ff8a3d,#ff5f6d);
+    color:#fff; padding:calc(20px + env(safe-area-inset-top)) 20px 26px;
+    border-radius:0 0 28px 28px; box-shadow:var(--shadow);
+    text-align:center;
+  }
+  .header h1{font-size:26px;letter-spacing:2px;text-shadow:0 2px 8px rgba(0,0,0,.15)}
+  .header .sub{margin-top:8px;font-size:14px;opacity:.95}
+  .header .cycle{margin-top:6px;font-size:13px;opacity:.9}
+  .progress{max-width:280px;height:8px;background:rgba(255,255,255,.35);border-radius:99px;margin:12px auto 0;overflow:hidden}
+  .progress i{display:block;height:100%;background:#fff;border-radius:99px;transition:width .4s}
+  .tabs{
+    display:flex;gap:10px;padding:14px 16px 0;position:sticky;top:0;z-index:5;
+    background:var(--bg);
+  }
+  .tab{
+    flex:1;padding:10px 0;border:none;border-radius:14px;font-size:15px;font-weight:600;
+    background:var(--card);color:var(--muted);cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,.04);transition:.2s;
+  }
+  .tab.active{background:var(--primary);color:#fff;box-shadow:0 6px 16px rgba(255,122,47,.35)}
+  .view{display:none;padding:18px 16px 0;animation:fade .3s}
+  .view.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .date-bar{
+    display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;
+  }
+  .date-bar .date{font-size:17px;font-weight:700}
+  .date-bar .date small{display:block;font-size:12px;color:var(--muted);font-weight:400;margin-top:2px}
+  .btn{
+    border:none;cursor:pointer;border-radius:12px;padding:9px 14px;font-size:13px;font-weight:600;
+  }
+  .btn-primary{background:var(--primary);color:#fff;box-shadow:0 4px 12px rgba(255,122,47,.3)}
+  .btn-ghost{background:var(--card);color:var(--muted);box-shadow:0 2px 8px rgba(0,0,0,.05)}
+  .meal-card{
+    background:var(--card);border-radius:var(--radius);padding:18px 18px 16px;margin-bottom:12px;
+    box-shadow:var(--shadow);display:flex;align-items:center;gap:14px;border:1px solid var(--line);
+  }
+  .meal-ico{
+    width:56px;height:56px;flex:none;border-radius:16px;display:flex;align-items:center;justify-content:center;
+    font-size:28px;background:var(--primary-soft);
+  }
+  .meal-info{flex:1;min-width:0}
+  .meal-name{font-size:19px;font-weight:700}
+  .meal-time{font-size:12px;color:var(--muted);margin-top:3px}
+  .meal-num{font-size:12px;color:var(--muted);flex:none;text-align:right}
+  .today-badge{
+    display:inline-block;font-size:11px;font-weight:700;color:var(--primary);
+    background:var(--primary-soft);padding:3px 8px;border-radius:99px;margin-left:6px;vertical-align:middle;
+  }
+  .tip{
+    background:var(--primary-soft);border-radius:14px;padding:12px 14px;font-size:13px;color:#b05a1d;
+    margin-top:14px;line-height:1.6;
+  }
+  .calendar{
+    display:grid;grid-template-columns:repeat(7,1fr);gap:6px;
+  }
+  .cal-head{text-align:center;font-size:11px;color:var(--muted);padding:6px 0}
+  .cal-cell{
+    background:var(--card);border-radius:10px;padding:6px 4px;border:1px solid var(--line);
+    min-height:64px;cursor:pointer;text-align:center;transition:.15s;
+  }
+  .cal-cell:active{transform:scale(.96)}
+  .cal-cell.today{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary-soft)}
+  .cal-cell.empty{background:transparent;border:none;cursor:default}
+  .cal-num{font-size:13px;font-weight:700}
+  .cal-cell.today .cal-num{color:var(--primary)}
+  .cal-dish{font-size:10px;color:var(--muted);line-height:1.5;margin-top:3px;word-break:break-all}
+  .cal-dish b{color:var(--text);font-weight:500}
+  .weekday-row{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:4px}
+  .footer{text-align:center;font-size:12px;color:var(--muted);margin-top:20px;line-height:1.8;padding:0 24px}
+  .footer b{color:var(--primary)}
+  .share-btn{
+    display:block;width:100%;margin-top:14px;padding:13px;border:none;border-radius:14px;
+    background:var(--primary);color:#fff;font-size:16px;font-weight:700;cursor:pointer;
+    box-shadow:0 6px 18px rgba(255,122,47,.35);
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🍜 今天吃什么</h1>
+  <div class="sub" id="headerDate"></div>
+  <div class="cycle" id="headerCycle"></div>
+  <div class="progress"><i id="headerProgress" style="width:0%"></i></div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" id="tabToday" onclick="switchView('today')">📅 今天</button>
+  <button class="tab" id="tabCal" onclick="switchView('calendar')">🗓 整月菜单</button>
+</div>
+
+<div class="view active" id="viewToday">
+  <div class="date-bar">
+    <div class="date" id="barDate"></div>
+    <button class="btn btn-primary" onclick="randomSwap()">🎲 换一换</button>
+  </div>
+  <div id="mealList"></div>
+  <div class="tip">💡 每餐背后标有 <b>第X天</b>,同一道菜 30 天内不会重复。点击「换一换」可随机替换今天的任意一餐。</div>
+  <button class="share-btn" onclick="shareToday()">📤 分享今天的菜单</button>
+</div>
+
+<div class="view" id="viewCalendar">
+  <div class="date-bar">
+    <input type="date" id="dateInput" class="btn btn-ghost" onchange="jumpToDate(this.value)">
+  </div>
+  <div class="weekday-row" id="weekRow"></div>
+  <div class="calendar" id="calGrid"></div>
+  <div class="tip">🗓 点击任意日期可查看当天的三餐安排;标红为今天。</div>
+</div>
+
+<div class="footer">
+  30 天三餐不重复 · 每天自动更新<br>
+  收藏或转发本链接,明天也能用 —— <b id="pageUrl">https://github.com</b>
+</div>
+
+<script>
+var MEALS = {
+  breakfast: [
+    "豆浆油条","小笼包","皮蛋瘦肉粥","煎饼果子","葱油拌面","茶叶蛋+馒头","豆腐脑","鸡蛋灌饼",
+    "肠粉","鲜肉馄饨","韭菜盒子","奶黄包+牛奶","火腿三明治","燕麦粥+水果","蒸饺","烧麦",
+    "粢饭团","蛋炒饭","桂林米粉","牛肉汉堡","玉米粥+咸菜","吐司煎蛋","锅贴","酒酿小圆子",
+    "寿司便当","荞麦冷面","肉夹馍","面包+酸奶","疙瘩汤","紫薯粥+包子"
+  ],
+  lunch: [
+    "宫保鸡丁盖饭","红烧牛肉面","麻辣香锅","黄焖鸡米饭","兰州拉面","番茄炒蛋盖饭","炸酱面",
+    "扬州炒饭","酸辣粉","鱼香肉丝盖饭","沙县拌面+炖汤","生煎包+牛肉汤","腊味煲仔饭","麻酱凉皮",
+    "蛋包饭","螺蛳粉","石锅拌饭","热干面","隆江猪脚饭","咖喱鸡饭","过桥米线","肉末茄子饭",
+    "土豆牛肉盖饭","重庆小面","烧鸭饭","咖喱猪排饭","砂锅排骨饭","西红柿鸡蛋面","蜜汁叉烧饭","冒菜"
+  ],
+  dinner: [
+    "牛油火锅","水煮鱼","烤鱼","新疆大盘鸡","酸菜鱼","韩式烤肉","麻辣小龙虾","日式拉面",
+    "寿喜锅","麻辣烫","披萨","肉酱意面","香煎牛排","铁板鱿鱼","潮汕砂锅粥","椰子鸡火锅",
+    "猪肚鸡","港式打边炉","炸鸡+啤酒","芝士汉堡+薯条","卤味拼盘+米饭","台式卤肉饭","汽锅鸡",
+    "日式铁板烧","关东煮","部队锅","冬阴功汤","越南河粉","干锅牛蛙","清蒸鲈鱼+米饭"
+  ]
+};
+var CYCLE = 30;
+var EPOCH = new Date(2026, 0, 1);
+var today = new Date();
+today.setHours(0,0,0,0);
+
+function dayIndex(d){
+  return Math.floor((d - EPOCH) / 86400000) % CYCLE;
+}
+function pad(n){return n<10 ? "0"+n : ""+n}
+function fmtDate(d){
+  return d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate());
+}
+function fmtCN(d){
+  var w = ["日","一","二","三","四","五","六"][d.getDay()];
+  return d.getMonth()+1 + "月" + d.getDate() + "日 · 星期" + w;
+}
+function mealsOf(d){
+  var i = dayIndex(d), day = (i + CYCLE) % CYCLE + 1;
+  return {
+    day: day,
+    b: MEALS.breakfast[day-1],
+    l: MEALS.lunch[day-1],
+    d: MEALS.dinner[day-1]
+  };
+}
+function esc(s){
+  return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+var cur = today;
+
+function renderHeader(){
+  document.getElementById("headerDate").textContent = fmtCN(cur);
+  document.getElementById("headerCycle").textContent =
+    cur.toDateString() === today.toDateString() ? "今日第 " + mealsOf(cur).day + " 天" : "查看第 " + mealsOf(cur).day + " 天";
+  var pct = (mealsOf(cur).day / CYCLE * 100).toFixed(1);
+  document.getElementById("headerProgress").style.width = pct + "%";
+}
+function mealCard(ico, time, name, num, isToday){
+  return '<div class="meal-card">' +
+    '<div class="meal-ico">' + ico + '</div>' +
+    '<div class="meal-info">' +
+      '<div class="meal-name">' + esc(name) + (isToday ? '<span class="today-badge">今天</span>' : '') + '</div>' +
+      '<div class="meal-time">' + time + '</div>' +
+    '</div>' +
+    '<div class="meal-num">第' + num + '天</div>' +
+  '</div>';
+}
+function renderToday(){
+  var m = mealsOf(cur);
+  var isToday = cur.toDateString() === today.toDateString();
+  document.getElementById("barDate").innerHTML = fmtCN(cur) + (isToday ? '<small>今天吃什么,不用纠结</small>' : '<small>预览日期</small>');
+  document.getElementById("mealList").innerHTML =
+    mealCard("🌅","早餐 · 07:00 - 09:00", m.b, m.day, isToday) +
+    mealCard("☀️","午餐 · 11:30 - 13:30", m.l, m.day, isToday) +
+    mealCard("🌙","晚餐 · 17:30 - 20:00", m.d, m.day, isToday);
+}
+function renderCalendar(){
+  var y = cur.getFullYear(), mo = cur.getMonth();
+  var first = new Date(y, mo, 1);
+  var dim = new Date(y, mo+1, 0).getDate();
+  var startDow = first.getDay();
+  var html = "";
+  for (var i=0;i<7;i++) html += '<div class="cal-head">' + ["日","一","二","三","四","五","六"][i] + '</div>';
+  document.getElementById("weekRow").innerHTML = html;
+  var cells = "";
+  for (var i=0;i<startDow;i++) cells += '<div class="cal-cell empty"></div>';
+  for (var d=1;d<=dim;d++){
+    var dt = new Date(y, mo, d);
+    var m = mealsOf(dt);
+    var cls = "cal-cell";
+    if (dt.toDateString() === today.toDateString()) cls += " today";
+    var on = "onclick='pickDate(new Date(" + y + "," + mo + "," + d + "))'";
+    cells += '<div class="cal-cell ' + cls + '" ' + on + '>' +
+      '<div class="cal-num">' + d + '</div>' +
+      '<div class="cal-dish"><b>早</b>' + esc(m.b) + '<br><b>午</b>' + esc(m.l) + '<br><b>晚</b>' + esc(m.d) + '</div>' +
+    '</div>';
+  }
+  document.getElementById("calGrid").innerHTML = cells;
+  document.getElementById("dateInput").value = fmtDate(cur);
+}
+function pickDate(d){
+  cur = d;
+  switchView("today");
+  renderAll();
+}
+function jumpToDate(v){
+  if(!v) return;
+  var p = v.split("-");
+  cur = new Date(+p[0], +p[1]-1, +p[2]);
+  renderAll();
+}
+function switchView(name){
+  document.getElementById("tabToday").className = "tab" + (name==="today" ? " active" : "");
+  document.getElementById("tabCal").className = "tab" + (name==="calendar" ? " active" : "");
+  document.getElementById("viewToday").className = "view" + (name==="today" ? " active" : "");
+  document.getElementById("viewCalendar").className = "view" + (name==="calendar" ? " active" : "");
+  if (name==="calendar") renderCalendar();
+}
+function randomSwap(){
+  var i = dayIndex(cur);
+  var pools = [MEALS.breakfast, MEALS.lunch, MEALS.dinner];
+  var names = [cur ? mealsOf(cur).b : "", "", ""];
+  var m = mealsOf(cur);
+  var alts = [];
+  pools.forEach(function(p, k){
+    var pool = p.filter(function(x){
+      return x !== [m.b, m.l, m.d][k];
+    });
+    var pick = pool[Math.floor(Math.random() * pool.length)];
+    if (k===0) m.b = pick; if (k===1) m.l = pick; if (k===2) m.d = pick;
+  });
+  renderToday();
+  var tip = document.querySelector(".tip");
+  tip.innerHTML = "🎲 已为你随机调整!早餐「" + esc(m.b) + "」午餐「" + esc(m.l) + "」晚餐「" + esc(m.d) + "」";
+}
+function shareToday(){
+  var m = mealsOf(today);
+  var txt = "今天吃什么?🍜\n\n🌅 早餐 " + m.b + "\n☀️ 午餐 " + m.l + "\n🌙 晚餐 " + m.d + "\n\n30天不重复菜单: " + location.href;
+  if (navigator.share) {
+    navigator.share({title:"今天吃什么", text:txt}).catch(function(){});
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(txt).then(function(){
+      alert("菜单已复制,粘贴给朋友即可 🎉");
+    });
+  } else {
+    prompt("复制这段菜单:", txt);
+  }
+}
+function renderAll(){
+  renderHeader();
+  renderToday();
+}
+document.getElementById("pageUrl").textContent = location.href;
+renderAll();
+</script>
+</body>
+</html>
