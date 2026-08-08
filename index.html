@@ -300,7 +300,7 @@ var today = new Date(); today.setHours(0,0,0,0);
 var HISTORY_KEY = "sancan_history_v2";
 var DRAWN_KEY = "sancan_drawn_v2";
 var drawn = loadJSON(DRAWN_KEY, {breakfast:null, lunch:null, dinner:null, date:null});
-var history = [];
+var undoStack = [];
 var rolling = false;
 var openDetail = {breakfast:false, lunch:false, dinner:false};
 
@@ -375,7 +375,7 @@ function renderDrawView(){
   list.innerHTML = html;
   var done = drawn.breakfast && drawn.lunch && drawn.dinner;
   document.getElementById("bottomActions").style.display = done ? "flex" : "none";
-  document.getElementById("undoBtn").disabled = !history.length;
+  document.getElementById("undoBtn").disabled = !undoStack.length;
   var hint = document.getElementById("drawHint");
   if (done){
     hint.innerHTML = '🎉 三餐已定,去享用吧';
@@ -409,7 +409,7 @@ function doDraw(){
         drawn[s] = picked[s];
         h[s].push(picked[s].n);
         if (h[s].length > 24) h[s].shift();
-        history.push({slot:s, from:null, to:picked[s].n});
+        undoStack.push({slot:s, from:null, to:picked[s].n});
       });
       save(HISTORY_KEY, h);
       drawn.date = fmtDate(today);
@@ -430,7 +430,7 @@ function drawSlot(s){
   var prev = drawn[s];
   var next = pick(s, h[s]);
   drawn[s] = next;
-  history.push({slot:s, from: prev ? prev.n : null, to: next.n});
+  undoStack.push({slot:s, from: prev ? prev.n : null, to: next.n});
   h[s].push(next.n);
   if (h[s].length > 24) h[s].shift();
   save(HISTORY_KEY, h);
@@ -442,8 +442,8 @@ function drawSlot(s){
   setTimeout(function(){card.classList.remove("roll")}, 1700);
 }
 function undoDraw(){
-  if (rolling || !history.length) return;
-  var step = history.pop();
+  if (rolling || !undoStack.length) return;
+  var step = undoStack.pop();
   var h = usedPool();
   var ix = -1;
   h[step.slot].forEach(function(x,i){ if (x===step.to && ix<0) ix = i; });
@@ -467,7 +467,7 @@ function redrawAll(){
     if (!prev) return;
     var next = pick(s, h[s].slice());
     drawn[s] = next;
-    history.push({slot:s, from:prev.n, to:next.n});
+    undoStack.push({slot:s, from:prev.n, to:next.n});
     h[s].push(next.n);
     if (h[s].length > 24) h[s].shift();
   });
