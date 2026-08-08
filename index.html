@@ -3,136 +3,254 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#ff8a3d">
-<meta name="description" content="今天吃什么?30天三餐不重复菜单">
-<title>今天吃什么 · 30天不重复</title>
+<meta name="theme-color" content="#b08d57">
+<meta name="description" content="三餐签筒 · 今天吃什么,抽个签吧">
+<title>三餐签筒 · 天秤座限定</title>
 <style>
   :root{
-    --bg:#fff7f0; --card:#ffffff; --primary:#ff7a2f; --primary-soft:#ffe8d6;
-    --text:#3d2c23; --muted:#9a8577; --line:#f3e4d6;
-    --radius:20px; --shadow:0 8px 24px rgba(255,122,47,.12);
+    --gold:#b08d57; --gold-l:#d8b877; --gold-soft:#f3e7d2;
+    --lav:#8e7cc3; --lav-soft:#ede8f7;
+    --ink:#2e2a33; --muted:#8a8090; --card:rgba(255,255,255,.72);
+    --line:rgba(255,255,255,.65); --shadow:0 12px 40px rgba(120,90,40,.12);
+    --radius:22px;
   }
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{scroll-behavior:smooth}
   body{
-    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
-    background:var(--bg); color:var(--text); min-height:100vh;
-    padding-bottom:calc(24px + env(safe-area-inset-bottom));
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    background:#f7f3ee; color:var(--ink); min-height:100vh;
+    padding-bottom:calc(28px + env(safe-area-inset-bottom));
   }
+  body::before{
+    content:"";position:fixed;inset:0;z-index:-2;
+    background:
+      radial-gradient(58% 42% at 12% 8%, rgba(216,184,119,.28), transparent 62%),
+      radial-gradient(50% 38% at 90% 6%, rgba(142,124,195,.22), transparent 60%),
+      radial-gradient(65% 45% at 55% 100%, rgba(232,201,216,.30), transparent 62%),
+      linear-gradient(180deg,#faf6ef 0%,#f5f1f8 100%);
+  }
+  .serif{font-family:"Noto Serif SC","Songti SC",STSong,"SimSun",serif}
   .header{
-    background:linear-gradient(135deg,#ff8a3d,#ff5f6d);
-    color:#fff; padding:calc(20px + env(safe-area-inset-top)) 20px 26px;
-    border-radius:0 0 28px 28px; box-shadow:var(--shadow);
-    text-align:center;
+    position:relative;overflow:hidden;text-align:center;
+    padding:calc(34px + env(safe-area-inset-top)) 20px 30px;
   }
-  .header h1{font-size:26px;letter-spacing:2px;text-shadow:0 2px 8px rgba(0,0,0,.15)}
-  .header .sub{margin-top:8px;font-size:14px;opacity:.95}
-  .header .cycle{margin-top:6px;font-size:13px;opacity:.9}
-  .progress{max-width:280px;height:8px;background:rgba(255,255,255,.35);border-radius:99px;margin:12px auto 0;overflow:hidden}
-  .progress i{display:block;height:100%;background:#fff;border-radius:99px;transition:width .4s}
+  .header::before{
+    content:"♎";position:absolute;right:-14px;top:6px;font-size:110px;
+    opacity:.10;transform:rotate(12deg);line-height:1;
+  }
+  .crown{font-size:15px;letter-spacing:6px;color:var(--gold);font-weight:600}
+  .header h1{
+    font-family:"Noto Serif SC","Songti SC",STSong,serif;
+    font-size:34px;letter-spacing:8px;margin-top:6px;font-weight:700;
+    background:linear-gradient(120deg,#8e7cc3 10%,#b08d57 45%,#c98b7a 75%,#8e7cc3 100%);
+    background-size:200% auto;-webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;animation:shine 6s linear infinite;
+  }
+  @keyframes shine{to{background-position:200% center}}
+  .header .sub{margin-top:10px;font-size:13px;color:var(--muted);letter-spacing:2px}
+  .header .date-chip{
+    display:inline-flex;align-items:center;gap:6px;margin-top:14px;
+    background:var(--card);border:1px solid var(--line);border-radius:99px;
+    padding:7px 16px;font-size:13px;color:var(--ink);
+    box-shadow:0 4px 16px rgba(120,90,40,.08);
+  }
   .tabs{
-    display:flex;gap:10px;padding:14px 16px 0;position:sticky;top:0;z-index:5;
-    background:var(--bg);
+    display:flex;gap:8px;padding:0 16px;position:sticky;top:0;z-index:20;
+    margin-top:4px;padding-top:10px;
+    background:linear-gradient(180deg,rgba(247,243,238,.95),rgba(247,243,238,.65) 70%,transparent);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
   }
   .tab{
-    flex:1;padding:10px 0;border:none;border-radius:14px;font-size:15px;font-weight:600;
-    background:var(--card);color:var(--muted);cursor:pointer;
-    box-shadow:0 2px 8px rgba(0,0,0,.04);transition:.2s;
+    flex:1;padding:11px 0;border:1px solid transparent;border-radius:14px;font-size:14px;font-weight:600;
+    background:transparent;color:var(--muted);cursor:pointer;transition:.25s;letter-spacing:2px;
   }
-  .tab.active{background:var(--primary);color:#fff;box-shadow:0 6px 16px rgba(255,122,47,.35)}
-  .view{display:none;padding:18px 16px 0;animation:fade .3s}
+  .tab.active{
+    background:linear-gradient(135deg,rgba(176,141,87,.14),rgba(142,124,195,.14));
+    color:var(--ink);border-color:rgba(176,141,87,.35);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.6),0 6px 20px rgba(140,105,50,.10);
+  }
+  .view{display:none;padding:20px 16px 0;animation:fade .4s ease}
   .view.active{display:block}
-  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-  .date-bar{
-    display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;
+  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+  .draw-wrap{text-align:center;padding:8px 0 4px}
+  .draw-hint{font-size:13px;color:var(--muted);letter-spacing:1px;margin-bottom:22px}
+  .draw-hint b{color:var(--gold)}
+  .draw-btn{
+    position:relative;width:128px;height:128px;border:none;cursor:pointer;
+    border-radius:50%;color:#fff;font-size:20px;font-weight:700;letter-spacing:6px;
+    font-family:"Noto Serif SC","Songti SC",STSong,serif;
+    background:radial-gradient(circle at 32% 28%,#e6c98a,#b08d57 55%,#8a6a3c);
+    box-shadow:0 14px 44px rgba(176,141,87,.45),inset 0 2px 6px rgba(255,255,255,.5);
+    transition:transform .2s;
   }
-  .date-bar .date{font-size:17px;font-weight:700}
-  .date-bar .date small{display:block;font-size:12px;color:var(--muted);font-weight:400;margin-top:2px}
-  .btn{
-    border:none;cursor:pointer;border-radius:12px;padding:9px 14px;font-size:13px;font-weight:600;
+  .draw-btn::before{
+    content:"";position:absolute;inset:-8px;border-radius:50%;
+    border:1px solid rgba(176,141,87,.55);animation:pulse 2.4s ease-out infinite;
   }
-  .btn-primary{background:var(--primary);color:#fff;box-shadow:0 4px 12px rgba(255,122,47,.3)}
-  .btn-ghost{background:var(--card);color:var(--muted);box-shadow:0 2px 8px rgba(0,0,0,.05)}
+  .draw-btn:active{transform:scale(.94)}
+  .draw-btn.shaking{animation:shake .45s ease-in-out infinite}
+  @keyframes shake{
+    0%,100%{transform:rotate(0)}25%{transform:rotate(-4deg) translateY(-2px)}
+    50%{transform:rotate(0) translateY(0)}75%{transform:rotate(4deg) translateY(-2px)}
+  }
+  @keyframes pulse{
+    0%{transform:scale(1);opacity:.8}
+    100%{transform:scale(1.28);opacity:0}
+  }
+  .draw-btn small{display:block;font-size:11px;letter-spacing:2px;opacity:.9;margin-top:2px}
+  .draw-btn.shaking small{display:none}
+  .shaking-text{display:none;font-size:12px;letter-spacing:3px}
+  .draw-btn.shaking .shaking-text{display:block}
+
+  .meals{margin-top:26px;text-align:left}
   .meal-card{
-    background:var(--card);border-radius:var(--radius);padding:18px 18px 16px;margin-bottom:12px;
-    box-shadow:var(--shadow);display:flex;align-items:center;gap:14px;border:1px solid var(--line);
+    position:relative;overflow:hidden;
+    background:var(--card);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border:1px solid var(--line);border-radius:var(--radius);
+    padding:18px;margin-bottom:12px;display:flex;align-items:center;gap:14px;
+    box-shadow:var(--shadow);transition:border-color .3s,transform .3s;
+    animation:cardIn .5s cubic-bezier(.2,.8,.3,1.1) both;
+  }
+  @keyframes cardIn{from{opacity:0;transform:translateY(26px) scale(.96)}to{opacity:1;transform:none}}
+  .meal-card.revealed{border-color:rgba(176,141,87,.55);box-shadow:0 14px 44px rgba(176,141,87,.22)}
+  .meal-card.roll{animation:roll 1.6s ease-in-out}
+  @keyframes roll{
+    0%{transform:rotate(0)}30%{transform:rotate(-1.5deg) translateX(-3px)}
+    60%{transform:rotate(1.5deg) translateX(3px)}100%{transform:rotate(0)}
   }
   .meal-ico{
-    width:56px;height:56px;flex:none;border-radius:16px;display:flex;align-items:center;justify-content:center;
-    font-size:28px;background:var(--primary-soft);
+    width:54px;height:54px;flex:none;border-radius:16px;display:flex;align-items:center;justify-content:center;
+    font-size:27px;background:linear-gradient(135deg,var(--gold-soft),var(--lav-soft));
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.7);
   }
   .meal-info{flex:1;min-width:0}
-  .meal-name{font-size:19px;font-weight:700}
-  .meal-time{font-size:12px;color:var(--muted);margin-top:3px}
-  .meal-num{font-size:12px;color:var(--muted);flex:none;text-align:right}
-  .today-badge{
-    display:inline-block;font-size:11px;font-weight:700;color:var(--primary);
-    background:var(--primary-soft);padding:3px 8px;border-radius:99px;margin-left:6px;vertical-align:middle;
+  .meal-time{font-size:11px;color:var(--muted);letter-spacing:3px}
+  .meal-name{
+    font-family:"Noto Serif SC","Songti SC",STSong,serif;
+    font-size:21px;font-weight:700;margin-top:3px;letter-spacing:1px;
   }
+  .meal-name.rolling{color:var(--lav)}
+  .meal-sub{font-size:11px;color:var(--muted);margin-top:2px;letter-spacing:1px}
+  .meal-actions{display:flex;flex-direction:column;gap:8px;flex:none;align-items:center}
+  .slot-btn{
+    width:34px;height:34px;border-radius:50%;border:1px solid rgba(176,141,87,.4);
+    background:rgba(255,255,255,.5);color:var(--gold);cursor:pointer;font-size:15px;
+    display:flex;align-items:center;justify-content:center;transition:.2s;
+  }
+  .slot-btn:active{transform:scale(.88);background:var(--gold-soft)}
+  .lottery-tag{
+    font-size:10px;color:var(--gold);letter-spacing:2px;font-weight:600;
+    opacity:0;transform:translateY(4px);transition:.4s;
+  }
+  .lottery-tag.show{opacity:1;transform:none}
+  .bottom-actions{display:flex;gap:10px;margin-top:18px}
+  .btn{
+    flex:1;border:none;cursor:pointer;border-radius:14px;padding:13px 0;font-size:14px;font-weight:600;
+    letter-spacing:2px;transition:.2s;
+  }
+  .btn:active{transform:scale(.97)}
+  .btn-gold{
+    background:linear-gradient(135deg,#d8b877,#b08d57);color:#fff;
+    box-shadow:0 8px 24px rgba(176,141,87,.4);
+  }
+  .btn-ghost{
+    background:var(--card);color:var(--muted);border:1px solid var(--line);
+    box-shadow:0 4px 14px rgba(120,90,40,.08);
+  }
+  .btn:disabled{opacity:.35;cursor:not-allowed;transform:none!important}
+
   .tip{
-    background:var(--primary-soft);border-radius:14px;padding:12px 14px;font-size:13px;color:#b05a1d;
-    margin-top:14px;line-height:1.6;
+    background:linear-gradient(135deg,rgba(243,231,210,.9),rgba(237,232,247,.9));
+    border:1px solid rgba(176,141,87,.25);border-radius:14px;padding:12px 14px;
+    font-size:12.5px;color:#7a5a2e;margin-top:16px;line-height:1.8;letter-spacing:.5px;
   }
-  .calendar{
-    display:grid;grid-template-columns:repeat(7,1fr);gap:6px;
-  }
-  .cal-head{text-align:center;font-size:11px;color:var(--muted);padding:6px 0}
+
+  .calendar-wrap{background:var(--card);backdrop-filter:blur(14px);border:1px solid var(--line);
+    border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+  .cal-head-row{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px}
+  .cal-head{text-align:center;font-size:11px;color:var(--muted);padding:4px 0;letter-spacing:2px}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
   .cal-cell{
-    background:var(--card);border-radius:10px;padding:6px 4px;border:1px solid var(--line);
-    min-height:64px;cursor:pointer;text-align:center;transition:.15s;
+    background:rgba(247,243,238,.8);border:1px solid rgba(176,141,87,.15);border-radius:9px;
+    padding:5px 3px;min-height:58px;cursor:pointer;text-align:center;transition:.15s;
   }
-  .cal-cell:active{transform:scale(.96)}
-  .cal-cell.today{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary-soft)}
+  .cal-cell:active{transform:scale(.95)}
+  .cal-cell.today{
+    border-color:var(--gold);background:linear-gradient(135deg,var(--gold-soft),var(--lav-soft));
+    box-shadow:0 0 0 2px rgba(176,141,87,.35);
+  }
   .cal-cell.empty{background:transparent;border:none;cursor:default}
-  .cal-num{font-size:13px;font-weight:700}
-  .cal-cell.today .cal-num{color:var(--primary)}
-  .cal-dish{font-size:10px;color:var(--muted);line-height:1.5;margin-top:3px;word-break:break-all}
-  .cal-dish b{color:var(--text);font-weight:500}
-  .weekday-row{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:4px}
-  .footer{text-align:center;font-size:12px;color:var(--muted);margin-top:20px;line-height:1.8;padding:0 24px}
-  .footer b{color:var(--primary)}
-  .share-btn{
-    display:block;width:100%;margin-top:14px;padding:13px;border:none;border-radius:14px;
-    background:var(--primary);color:#fff;font-size:16px;font-weight:700;cursor:pointer;
-    box-shadow:0 6px 18px rgba(255,122,47,.35);
+  .cal-num{font-size:12px;font-weight:700}
+  .cal-cell.today .cal-num{color:var(--gold)}
+  .cal-dish{font-size:9.5px;color:var(--muted);line-height:1.45;margin-top:2px;word-break:break-all}
+  .cal-dish b{color:var(--ink);font-weight:600}
+  .cal-input-row{display:flex;gap:8px;margin-bottom:14px;align-items:center}
+  .cal-input-row label{font-size:12px;color:var(--muted);letter-spacing:2px;flex:none}
+  .cal-input-row input{
+    flex:1;border:1px solid var(--line);border-radius:12px;padding:9px 12px;font-size:13px;
+    background:rgba(255,255,255,.6);color:var(--ink);font-family:inherit;
   }
+
+  .share-btn{
+    display:block;width:100%;margin-top:16px;padding:14px;border:none;border-radius:14px;
+    background:linear-gradient(135deg,#8e7cc3,#b08d57);color:#fff;font-size:15px;font-weight:700;
+    letter-spacing:3px;cursor:pointer;box-shadow:0 10px 30px rgba(142,124,195,.35);transition:.2s;
+  }
+  .share-btn:active{transform:scale(.98)}
+  .footer{text-align:center;font-size:12px;color:var(--muted);margin-top:24px;line-height:2;padding:0 24px}
+  .footer .sign{color:var(--gold);letter-spacing:4px}
 </style>
 </head>
 <body>
 
 <div class="header">
-  <h1>🍜 今天吃什么</h1>
-  <div class="sub" id="headerDate"></div>
-  <div class="cycle" id="headerCycle"></div>
-  <div class="progress"><i id="headerProgress" style="width:0%"></i></div>
+  <div class="crown">⚖️ L I B R A</div>
+  <h1>三餐签筒</h1>
+  <div class="sub">今日宜食 · 抽一支好签</div>
+  <div class="date-chip" id="dateChip"></div>
 </div>
 
 <div class="tabs">
-  <button class="tab active" id="tabToday" onclick="switchView('today')">📅 今天</button>
-  <button class="tab" id="tabCal" onclick="switchView('calendar')">🗓 整月菜单</button>
+  <button class="tab active" id="tabDraw" onclick="switchView('draw')">🎋 抽签</button>
+  <button class="tab" id="tabToday" onclick="switchView('today')">📜 今日菜单</button>
+  <button class="tab" id="tabCal" onclick="switchView('calendar')">🗓 整月</button>
 </div>
 
-<div class="view active" id="viewToday">
-  <div class="date-bar">
-    <div class="date" id="barDate"></div>
-    <button class="btn btn-primary" onclick="randomSwap()">🎲 换一换</button>
+<div class="view active" id="viewDraw">
+  <div class="draw-wrap">
+    <div class="draw-hint" id="drawHint">心诚则灵 · 轻轻一按</div>
+    <button class="draw-btn" id="drawBtn" onclick="doDraw()">抽 签<small>三餐定数</small><span class="shaking-text">摇 签 中</span></button>
   </div>
-  <div id="mealList"></div>
-  <div class="tip">💡 每餐背后标有 <b>第X天</b>,同一道菜 30 天内不会重复。点击「换一换」可随机替换今天的任意一餐。</div>
-  <button class="share-btn" onclick="shareToday()">📤 分享今天的菜单</button>
+  <div class="meals" id="mealList"></div>
+  <div class="bottom-actions" id="bottomActions" style="display:none">
+    <button class="btn btn-ghost" id="undoBtn" onclick="undoDraw()" disabled>↩ 反悔</button>
+    <button class="btn btn-ghost" onclick="redrawAll()">🔄 全部重抽</button>
+  </div>
+  <div class="tip" id="drawTip"></div>
+  <button class="share-btn" onclick="shareToday()">📤 分享今日签运</button>
+</div>
+
+<div class="view" id="viewToday">
+  <div class="tip">📜 这是为你排好的「30 天不重复」定数菜单,今日第 <b id="dayNum">1</b> 天</div>
+  <div id="planList"></div>
 </div>
 
 <div class="view" id="viewCalendar">
-  <div class="date-bar">
-    <input type="date" id="dateInput" class="btn btn-ghost" onchange="jumpToDate(this.value)">
+  <div class="calendar-wrap">
+    <div class="cal-input-row">
+      <label>跳转</label>
+      <input type="date" id="dateInput" onchange="jumpToDate(this.value)">
+    </div>
+    <div class="cal-head-row" id="calHeadRow"></div>
+    <div class="cal-grid" id="calGrid"></div>
   </div>
-  <div class="weekday-row" id="weekRow"></div>
-  <div class="calendar" id="calGrid"></div>
-  <div class="tip">🗓 点击任意日期可查看当天的三餐安排;标红为今天。</div>
+  <div class="tip">🗓 点击任意日期查看当天定数菜单;金色高亮为今天。抽签结果与定数互不影响。</div>
 </div>
 
 <div class="footer">
-  30 天三餐不重复 · 每天自动更新<br>
-  收藏或转发本链接,明天也能用 —— <b id="pageUrl">https://github.com</b>
+  <div class="sign">♎ 天秤座的平衡之道 · 每日一签 · 30 天不重样 ♎</div>
+  收藏本链接,今日签运会留在手机里 · <b id="pageUrl"></b>
 </div>
 
 <script>
@@ -158,139 +276,254 @@ var MEALS = {
 };
 var CYCLE = 30;
 var EPOCH = new Date(2026, 0, 1);
-var today = new Date();
-today.setHours(0,0,0,0);
-
-function dayIndex(d){
-  return Math.floor((d - EPOCH) / 86400000) % CYCLE;
-}
-function pad(n){return n<10 ? "0"+n : ""+n}
-function fmtDate(d){
-  return d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate());
-}
-function fmtCN(d){
-  var w = ["日","一","二","三","四","五","六"][d.getDay()];
-  return d.getMonth()+1 + "月" + d.getDate() + "日 · 星期" + w;
-}
-function mealsOf(d){
-  var i = dayIndex(d), day = (i + CYCLE) % CYCLE + 1;
-  return {
-    day: day,
-    b: MEALS.breakfast[day-1],
-    l: MEALS.lunch[day-1],
-    d: MEALS.dinner[day-1]
-  };
-}
-function esc(s){
-  return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-}
-
+var today = new Date(); today.setHours(0,0,0,0);
 var cur = today;
 
+var HISTORY_KEY = "sancan_history_v1";
+var DRAWN_KEY = "sancan_drawn_v1";
+var drawn = loadJSON(DRAWN_KEY, {breakfast:null, lunch:null, dinner:null, date:null});
+var history = [];
+var rolling = false;
+
+function pad(n){return n<10?"0"+n:""+n}
+function fmtDate(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
+function fmtCN(d){
+  var w=["日","一","二","三","四","五","六"][d.getDay()];
+  return d.getMonth()+1+"月"+d.getDate()+"日 · 星期"+w;
+}
+function loadJSON(k, fb){
+  try{var v = localStorage.getItem(k); return v ? JSON.parse(v) : fb;}catch(e){return fb}
+}
+function save(key, val){
+  try{localStorage.setItem(key, JSON.stringify(val));}catch(e){}
+}
+function usedPool(){
+  var h = loadJSON(HISTORY_KEY, {breakfast:[],lunch:[],dinner:[]});
+  if (drawn.date !== fmtDate(today)) {
+    drawn = {breakfast:null,lunch:null,dinner:null,date:fmtDate(today)};
+    save(DRAWN_KEY, drawn);
+  }
+  return h;
+}
+function dayIndex(d){return Math.floor((d-EPOCH)/86400000)%CYCLE}
+function planOf(d){
+  var i = dayIndex(d), day = (i+CYCLE)%CYCLE+1;
+  return {day:day, b:MEALS.breakfast[day-1], l:MEALS.lunch[day-1], d:MEALS.dinner[day-1]};
+}
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function pick(slot, exclude){
+  var pool = MEALS[slot].filter(function(x){return exclude.indexOf(x)<0});
+  if (!pool.length) pool = MEALS[slot].slice();
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+function slotOf(k){return k==="breakfast"?"早餐":(k==="lunch"?"午餐":"晚餐")}
+function icoOf(k){return k==="breakfast"?"🌅":(k==="lunch"?"☀️":"🌙")}
+
 function renderHeader(){
-  document.getElementById("headerDate").textContent = fmtCN(cur);
-  document.getElementById("headerCycle").textContent =
-    cur.toDateString() === today.toDateString() ? "今日第 " + mealsOf(cur).day + " 天" : "查看第 " + mealsOf(cur).day + " 天";
-  var pct = (mealsOf(cur).day / CYCLE * 100).toFixed(1);
-  document.getElementById("headerProgress").style.width = pct + "%";
+  document.getElementById("dateChip").textContent = fmtCN(cur);
 }
-function mealCard(ico, time, name, num, isToday){
-  return '<div class="meal-card">' +
-    '<div class="meal-ico">' + ico + '</div>' +
-    '<div class="meal-info">' +
-      '<div class="meal-name">' + esc(name) + (isToday ? '<span class="today-badge">今天</span>' : '') + '</div>' +
-      '<div class="meal-time">' + time + '</div>' +
-    '</div>' +
-    '<div class="meal-num">第' + num + '天</div>' +
-  '</div>';
+function renderDrawView(){
+  var slots = ["breakfast","lunch","dinner"];
+  var list = document.getElementById("mealList");
+  var html = "";
+  slots.forEach(function(s){
+    var d = drawn[s];
+    html += '<div class="meal-card' + (d ? ' revealed' : '') + '" id="card-'+s+'">' +
+      '<div class="meal-ico">' + icoOf(s) + '</div>' +
+      '<div class="meal-info">' +
+        '<div class="meal-time">' + slotOf(s) + ' · 第 ' + planOf(today).day + ' 日</div>' +
+        '<div class="meal-name' + (d ? '' : ' rolling') + '" id="name-'+s+'">' + (d ? esc(d) : "待抽") + '</div>' +
+        '<div class="lottery-tag' + (d ? ' show' : '') + '" id="tag-'+s+'">✨ 今日定数 · 反悔可得再签</div>' +
+      '</div>' +
+      (d ? '<div class="meal-actions"><button class="slot-btn" onclick="redrawSlot(\''+s+'\')" title="重抽这一餐">↻</button></div>' : '') +
+    '</div>';
+  });
+  list.innerHTML = html;
+  var done = drawn.breakfast && drawn.lunch && drawn.dinner;
+  document.getElementById("bottomActions").style.display = done ? "flex" : "none";
+  document.getElementById("undoBtn").disabled = !history.length;
+  var hint = document.getElementById("drawHint");
+  if (done){
+    hint.innerHTML = '🎉 三餐已定 · <b>天秤座</b>宜从容,勿再摇摆';
+    document.getElementById("drawTip").innerHTML = '💡 想反悔就点「反悔」退回上一签,或点某餐右侧的 ↻ 单独重抽。今天的签会留在手机里,刷新也不丢。';
+  } else {
+    hint.innerHTML = '心诚则灵 · 轻轻一按';
+    document.getElementById("drawTip").innerHTML = '💡 已抽的餐会存入本地,30 天内尽量不重复;「反悔」可退回上一签,天秤座的选择困难有救了。';
+  }
+  document.getElementById("drawBtn").style.display = done ? "none" : "";
 }
-function renderToday(){
-  var m = mealsOf(cur);
-  var isToday = cur.toDateString() === today.toDateString();
-  document.getElementById("barDate").innerHTML = fmtCN(cur) + (isToday ? '<small>今天吃什么,不用纠结</small>' : '<small>预览日期</small>');
-  document.getElementById("mealList").innerHTML =
-    mealCard("🌅","早餐 · 07:00 - 09:00", m.b, m.day, isToday) +
-    mealCard("☀️","午餐 · 11:30 - 13:30", m.l, m.day, isToday) +
-    mealCard("🌙","晚餐 · 17:30 - 20:00", m.d, m.day, isToday);
+function doDraw(){
+  if (rolling) return;
+  rolling = true;
+  var btn = document.getElementById("drawBtn");
+  btn.classList.add("shaking");
+  var slots = ["breakfast","lunch","dinner"].filter(function(s){return !drawn[s]});
+  var h = usedPool();
+  var picked = {};
+  slots.forEach(function(s){
+    picked[s] = pick(s, h[s]);
+  });
+  var names = {};
+  slots.forEach(function(s){
+    var el = document.getElementById("name-"+s);
+    if (el){ names[s] = el; el.classList.add("rolling"); }
+  });
+  var tick = 0;
+  var timer = setInterval(function(){
+    tick++;
+    slots.forEach(function(s){
+      if (names[s]){
+        var pool = MEALS[s];
+        names[s].textContent = pool[Math.floor(Math.random()*pool.length)];
+      }
+    });
+    if (tick >= 12){
+      clearInterval(timer);
+      btn.classList.remove("shaking");
+      slots.forEach(function(s){
+        var el = names[s];
+        if (!el) return;
+        el.classList.remove("rolling");
+        el.textContent = picked[s];
+        var card = document.getElementById("card-"+s);
+        card.classList.add("revealed");
+        card.classList.add("roll");
+        setTimeout(function(){card.classList.remove("roll")}, 1700);
+        document.getElementById("tag-"+s).classList.add("show");
+        drawn[s] = picked[s];
+        h[s].push(picked[s]);
+        if (h[s].length > 24) h[s].shift();
+        history.push({slot:s, from:null, to:picked[s]});
+      });
+      save(HISTORY_KEY, h);
+      drawn.date = fmtDate(today);
+      save(DRAWN_KEY, drawn);
+      rolling = false;
+      renderDrawView();
+    }
+  }, 130);
+}
+function redrawSlot(s){
+  if (rolling) return;
+  var h = usedPool();
+  var prev = drawn[s];
+  var exclude = h[s].slice();
+  var next = pick(s, exclude);
+  drawn[s] = next;
+  history.push({slot:s, from:prev, to:next});
+  h[s].push(next);
+  if (h[s].length > 24) h[s].shift();
+  save(HISTORY_KEY, h);
+  save(DRAWN_KEY, drawn);
+  renderDrawView();
+  var card = document.getElementById("card-"+s);
+  card.classList.add("roll");
+  setTimeout(function(){card.classList.remove("roll")}, 1700);
+}
+function undoDraw(){
+  if (rolling || !history.length) return;
+  var step = history.pop();
+  var h = usedPool();
+  var ix = h[step.slot].lastIndexOf(step.to);
+  if (ix >= 0) h[step.slot].splice(ix,1);
+  if (step.from) {
+    drawn[step.slot] = step.from;
+    h[step.slot].push(step.from);
+  } else {
+    drawn[step.slot] = null;
+  }
+  save(HISTORY_KEY, h);
+  save(DRAWN_KEY, drawn);
+  renderDrawView();
+}
+function redrawAll(){
+  if (rolling) return;
+  var h = usedPool();
+  ["breakfast","lunch","dinner"].forEach(function(s){
+    var prev = drawn[s];
+    if (!prev) return;
+    var next = pick(s, h[s].slice());
+    drawn[s] = next;
+    history.push({slot:s, from:prev, to:next});
+    h[s].push(next);
+    if (h[s].length > 24) h[s].shift();
+  });
+  save(HISTORY_KEY, h);
+  save(DRAWN_KEY, drawn);
+  renderDrawView();
+}
+function renderPlan(){
+  var p = planOf(today);
+  document.getElementById("dayNum").textContent = p.day;
+  var slots = [["🌅","早餐","b"],["☀️","午餐","l"],["🌙","晚餐","d"]];
+  var html = "";
+  slots.forEach(function(s){
+    html += '<div class="meal-card">' +
+      '<div class="meal-ico">' + s[0] + '</div>' +
+      '<div class="meal-info">' +
+        '<div class="meal-time">' + s[1] + ' · 07:00</div>' +
+        '<div class="meal-name">' + esc(p[s[2]]) + '</div>' +
+      '</div>' +
+    '</div>';
+  });
+  document.getElementById("planList").innerHTML = html;
 }
 function renderCalendar(){
   var y = cur.getFullYear(), mo = cur.getMonth();
   var first = new Date(y, mo, 1);
   var dim = new Date(y, mo+1, 0).getDate();
   var startDow = first.getDay();
-  var html = "";
-  for (var i=0;i<7;i++) html += '<div class="cal-head">' + ["日","一","二","三","四","五","六"][i] + '</div>';
-  document.getElementById("weekRow").innerHTML = html;
+  var head = "";
+  for (var i=0;i<7;i++) head += '<div class="cal-head">'+["日","一","二","三","四","五","六"][i]+'</div>';
+  document.getElementById("calHeadRow").innerHTML = head;
   var cells = "";
   for (var i=0;i<startDow;i++) cells += '<div class="cal-cell empty"></div>';
   for (var d=1;d<=dim;d++){
     var dt = new Date(y, mo, d);
-    var m = mealsOf(dt);
-    var cls = "cal-cell";
-    if (dt.toDateString() === today.toDateString()) cls += " today";
-    var on = "onclick='pickDate(new Date(" + y + "," + mo + "," + d + "))'";
-    cells += '<div class="cal-cell ' + cls + '" ' + on + '>' +
-      '<div class="cal-num">' + d + '</div>' +
-      '<div class="cal-dish"><b>早</b>' + esc(m.b) + '<br><b>午</b>' + esc(m.l) + '<br><b>晚</b>' + esc(m.d) + '</div>' +
+    var p = planOf(dt);
+    var cls = "cal-cell" + (dt.toDateString()===today.toDateString() ? " today" : "");
+    cells += '<div class="cal-cell '+cls+'" onclick="pickDate(new Date('+y+','+mo+','+d+'))">' +
+      '<div class="cal-num">'+d+'</div>' +
+      '<div class="cal-dish"><b>早</b>'+esc(p.b)+'<br><b>午</b>'+esc(p.l)+'<br><b>晚</b>'+esc(p.d)+'</div>' +
     '</div>';
   }
   document.getElementById("calGrid").innerHTML = cells;
   document.getElementById("dateInput").value = fmtDate(cur);
 }
-function pickDate(d){
-  cur = d;
-  switchView("today");
-  renderAll();
-}
+function pickDate(d){ cur = d; switchView("calendar"); renderCalendar(); }
 function jumpToDate(v){
-  if(!v) return;
+  if (!v) return;
   var p = v.split("-");
   cur = new Date(+p[0], +p[1]-1, +p[2]);
-  renderAll();
+  renderCalendar();
 }
 function switchView(name){
-  document.getElementById("tabToday").className = "tab" + (name==="today" ? " active" : "");
-  document.getElementById("tabCal").className = "tab" + (name==="calendar" ? " active" : "");
-  document.getElementById("viewToday").className = "view" + (name==="today" ? " active" : "");
-  document.getElementById("viewCalendar").className = "view" + (name==="calendar" ? " active" : "");
-  if (name==="calendar") renderCalendar();
-}
-function randomSwap(){
-  var i = dayIndex(cur);
-  var pools = [MEALS.breakfast, MEALS.lunch, MEALS.dinner];
-  var names = [cur ? mealsOf(cur).b : "", "", ""];
-  var m = mealsOf(cur);
-  var alts = [];
-  pools.forEach(function(p, k){
-    var pool = p.filter(function(x){
-      return x !== [m.b, m.l, m.d][k];
-    });
-    var pick = pool[Math.floor(Math.random() * pool.length)];
-    if (k===0) m.b = pick; if (k===1) m.l = pick; if (k===2) m.d = pick;
+  ["draw","today","calendar"].forEach(function(n){
+    document.getElementById("tab"+cap(n)).className = "tab" + (n===name ? " active" : "");
+    document.getElementById("view"+cap(n)).className = "view" + (n===name ? " active" : "");
   });
-  renderToday();
-  var tip = document.querySelector(".tip");
-  tip.innerHTML = "🎲 已为你随机调整!早餐「" + esc(m.b) + "」午餐「" + esc(m.l) + "」晚餐「" + esc(m.d) + "」";
+  if (name==="calendar") renderCalendar();
+  if (name==="today") renderPlan();
 }
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1)}
 function shareToday(){
-  var m = mealsOf(today);
-  var txt = "今天吃什么?🍜\n\n🌅 早餐 " + m.b + "\n☀️ 午餐 " + m.l + "\n🌙 晚餐 " + m.d + "\n\n30天不重复菜单: " + location.href;
-  if (navigator.share) {
-    navigator.share({title:"今天吃什么", text:txt}).catch(function(){});
-  } else if (navigator.clipboard) {
-    navigator.clipboard.writeText(txt).then(function(){
-      alert("菜单已复制,粘贴给朋友即可 🎉");
-    });
+  var p = planOf(today);
+  var l = ["🌅 早餐 "+p.b,"☀️ 午餐 "+p.l,"🌙 晚餐 "+p.d];
+  if (drawn.breakfast && drawn.lunch && drawn.dinner && drawn.date===fmtDate(today)){
+    l = ["🌅 早餐 "+drawn.breakfast,"☀️ 午餐 "+drawn.lunch,"🌙 晚餐 "+drawn.dinner];
+  }
+  var txt = "三餐签筒 · 今日签运 🎋\n\n" + l.join("\n") + "\n\n30天不重样: " + location.href;
+  if (navigator.share){
+    navigator.share({title:"三餐签筒", text:txt}).catch(function(){});
+  } else if (navigator.clipboard){
+    navigator.clipboard.writeText(txt).then(function(){alert("签文已复制,发给朋友吧 🎉")});
   } else {
-    prompt("复制这段菜单:", txt);
+    prompt("复制签文:", txt);
   }
 }
-function renderAll(){
-  renderHeader();
-  renderToday();
-}
 document.getElementById("pageUrl").textContent = location.href;
-renderAll();
+renderHeader();
+renderDrawView();
 </script>
 </body>
 </html>
