@@ -297,8 +297,8 @@ var CYCLE = 30;
 var EPOCH = new Date(2026, 0, 1);
 var today = new Date(); today.setHours(0,0,0,0);
 
-var HISTORY_KEY = "sancan_history_v1";
-var DRAWN_KEY = "sancan_drawn_v1";
+var HISTORY_KEY = "sancan_history_v2";
+var DRAWN_KEY = "sancan_drawn_v2";
 var drawn = loadJSON(DRAWN_KEY, {breakfast:null, lunch:null, dinner:null, date:null});
 var history = [];
 var rolling = false;
@@ -345,12 +345,12 @@ function renderHeader(){
 }
 function cardHTML(s){
   var d = drawn[s];
-  var isOpen = openDetail[s];
+  var isOpen = d ? (openDetail[s] !== false) : false;
   var chips = "";
   if (d){
     (d.nu||[]).forEach(function(c){chips += '<span class="chip">'+esc(c)+'</span>'});
   }
-  return '<div class="meal-card' + (d?' revealed':'') + '" id="card-'+s+'">' +
+  return '<div class="meal-card' + (d?' revealed':'') + '" id="card-'+s+'" onclick="cardTap(event,\''+s+'\')">' +
     '<div class="meal-top">' +
       '<div class="meal-ico">' + icoOf(s) + '</div>' +
       '<div class="meal-info">' +
@@ -358,13 +358,13 @@ function cardHTML(s){
         '<div class="meal-name' + (d?'':' rolling') + '" id="name-'+s+'">' + (d?esc(d.n):"待抽") + '</div>' +
         '<div class="meal-side' + (d?'':' rolling') + '" id="side-'+s+'">' + (d?esc(d.s):"配菜 · 营养 · 做法 抽签后揭晓") + '</div>' +
       '</div>' +
-      '<button class="slot-btn' + (d?' on':'') + '" id="slot-'+s+'" onclick="drawSlot(\''+s+'\')" title="'+(d?'重抽':'抽取')+'这一餐">↻</button>' +
+      '<button class="slot-btn' + (d?' on':'') + '" id="slot-'+s+'" onclick="event.stopPropagation();drawSlot(\''+s+'\')" title="'+(d?'重抽':'抽取')+'这一餐">↻</button>' +
     '</div>' +
     (d ? '<div class="meal-detail' + (isOpen?' open':'') + '" id="detail-'+s+'">' +
       '<div class="nu-chips">' + chips + '</div>' +
       '<div class="recipe"><b>做法</b> ' + esc(d.r) + '</div>' +
     '</div>' : '') +
-    (d ? '<div class="toggle-row"><button class="toggle-detail" onclick="toggleDetail(\''+s+'\')">' + (isOpen?'收起做法 ▴':'看具体做法 ▾') + '</button>' +
+    (d ? '<div class="toggle-row"><button class="toggle-detail" onclick="event.stopPropagation();toggleDetail(\''+s+'\')">' + (isOpen?'收起做法 ▴':'看具体做法 ▾') + '</button>' +
       '<span class="lottery-tag show">✨ 今日定数</span></div>' : '') +
   '</div>';
 }
@@ -476,12 +476,16 @@ function redrawAll(){
   renderDrawView();
 }
 function toggleDetail(s){
-  openDetail[s] = !openDetail[s];
+  openDetail[s] = !(openDetail[s] !== false);
   var det = document.getElementById("detail-"+s);
   if (det) det.classList.toggle("open");
   var card = document.getElementById("card-"+s);
   var btn = card ? card.querySelector(".toggle-detail") : null;
   if (btn) btn.textContent = openDetail[s] ? "收起做法 ▴" : "看具体做法 ▾";
+}
+function cardTap(e, s){
+  if (e.target.closest && e.target.closest(".slot-btn")) return;
+  toggleDetail(s);
 }
 function shareToday(){
   var l = [];
