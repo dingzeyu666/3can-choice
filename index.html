@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#b08d57">
 <meta name="description" content="三餐签筒 · 今天吃什么,抽个签吧">
-<title>三餐签筒 · 天秤座限定</title>
+<title>三餐签筒</title>
 <style>
   :root{
     --gold:#b08d57; --gold-l:#d8b877; --gold-soft:#f3e7d2;
@@ -15,7 +15,6 @@
     --radius:22px;
   }
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  html{scroll-behavior:smooth}
   body{
     font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
     background:#f7f3ee; color:var(--ink); min-height:100vh;
@@ -29,11 +28,7 @@
       radial-gradient(65% 45% at 55% 100%, rgba(232,201,216,.30), transparent 62%),
       linear-gradient(180deg,#faf6ef 0%,#f5f1f8 100%);
   }
-  .serif{font-family:"Noto Serif SC","Songti SC",STSong,"SimSun",serif}
-  .header{
-    position:relative;overflow:hidden;text-align:center;
-    padding:calc(34px + env(safe-area-inset-top)) 20px 30px;
-  }
+  .header{position:relative;overflow:hidden;text-align:center;padding:calc(34px + env(safe-area-inset-top)) 20px 24px}
   .header::before{
     content:"♎";position:absolute;right:-14px;top:6px;font-size:110px;
     opacity:.10;transform:rotate(12deg);line-height:1;
@@ -51,31 +46,11 @@
   .header .date-chip{
     display:inline-flex;align-items:center;gap:6px;margin-top:14px;
     background:var(--card);border:1px solid var(--line);border-radius:99px;
-    padding:7px 16px;font-size:13px;color:var(--ink);
-    box-shadow:0 4px 16px rgba(120,90,40,.08);
+    padding:7px 16px;font-size:13px;box-shadow:0 4px 16px rgba(120,90,40,.08);
   }
-  .tabs{
-    display:flex;gap:8px;padding:0 16px;position:sticky;top:0;z-index:20;
-    margin-top:4px;padding-top:10px;
-    background:linear-gradient(180deg,rgba(247,243,238,.95),rgba(247,243,238,.65) 70%,transparent);
-    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-  }
-  .tab{
-    flex:1;padding:11px 0;border:1px solid transparent;border-radius:14px;font-size:14px;font-weight:600;
-    background:transparent;color:var(--muted);cursor:pointer;transition:.25s;letter-spacing:2px;
-  }
-  .tab.active{
-    background:linear-gradient(135deg,rgba(176,141,87,.14),rgba(142,124,195,.14));
-    color:var(--ink);border-color:rgba(176,141,87,.35);
-    box-shadow:inset 0 0 0 1px rgba(255,255,255,.6),0 6px 20px rgba(140,105,50,.10);
-  }
-  .view{display:none;padding:20px 16px 0;animation:fade .4s ease}
-  .view.active{display:block}
-  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-
+  .wrap{padding:20px 16px 0}
   .draw-wrap{text-align:center;padding:8px 0 4px}
   .draw-hint{font-size:13px;color:var(--muted);letter-spacing:1px;margin-bottom:22px}
-  .draw-hint b{color:var(--gold)}
   .draw-btn{
     position:relative;width:128px;height:128px;border:none;cursor:pointer;
     border-radius:50%;color:#fff;font-size:20px;font-weight:700;letter-spacing:6px;
@@ -94,22 +69,19 @@
     0%,100%{transform:rotate(0)}25%{transform:rotate(-4deg) translateY(-2px)}
     50%{transform:rotate(0) translateY(0)}75%{transform:rotate(4deg) translateY(-2px)}
   }
-  @keyframes pulse{
-    0%{transform:scale(1);opacity:.8}
-    100%{transform:scale(1.28);opacity:0}
-  }
+  @keyframes pulse{0%{transform:scale(1);opacity:.8}100%{transform:scale(1.28);opacity:0}}
   .draw-btn small{display:block;font-size:11px;letter-spacing:2px;opacity:.9;margin-top:2px}
   .draw-btn.shaking small{display:none}
   .shaking-text{display:none;font-size:12px;letter-spacing:3px}
   .draw-btn.shaking .shaking-text{display:block}
 
-  .meals{margin-top:26px;text-align:left}
+  .meals{margin-top:26px}
   .meal-card{
     position:relative;overflow:hidden;
     background:var(--card);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
     border:1px solid var(--line);border-radius:var(--radius);
-    padding:18px;margin-bottom:12px;display:flex;align-items:center;gap:14px;
-    box-shadow:var(--shadow);transition:border-color .3s,transform .3s;
+    padding:18px 16px;margin-bottom:12px;
+    box-shadow:var(--shadow);transition:border-color .3s;
     animation:cardIn .5s cubic-bezier(.2,.8,.3,1.1) both;
   }
   @keyframes cardIn{from{opacity:0;transform:translateY(26px) scale(.96)}to{opacity:1;transform:none}}
@@ -119,168 +91,218 @@
     0%{transform:rotate(0)}30%{transform:rotate(-1.5deg) translateX(-3px)}
     60%{transform:rotate(1.5deg) translateX(3px)}100%{transform:rotate(0)}
   }
+  .meal-top{display:flex;align-items:center;gap:14px}
   .meal-ico{
-    width:54px;height:54px;flex:none;border-radius:16px;display:flex;align-items:center;justify-content:center;
-    font-size:27px;background:linear-gradient(135deg,var(--gold-soft),var(--lav-soft));
+    width:52px;height:52px;flex:none;border-radius:16px;display:flex;align-items:center;justify-content:center;
+    font-size:26px;background:linear-gradient(135deg,var(--gold-soft),var(--lav-soft));
     box-shadow:inset 0 0 0 1px rgba(255,255,255,.7);
   }
   .meal-info{flex:1;min-width:0}
   .meal-time{font-size:11px;color:var(--muted);letter-spacing:3px}
   .meal-name{
     font-family:"Noto Serif SC","Songti SC",STSong,serif;
-    font-size:21px;font-weight:700;margin-top:3px;letter-spacing:1px;
+    font-size:20px;font-weight:700;margin-top:3px;letter-spacing:1px;
   }
   .meal-name.rolling{color:var(--lav)}
-  .meal-sub{font-size:11px;color:var(--muted);margin-top:2px;letter-spacing:1px}
-  .meal-actions{display:flex;flex-direction:column;gap:8px;flex:none;align-items:center}
+  .meal-side{font-size:12px;color:var(--muted);margin-top:2px;letter-spacing:.5px}
   .slot-btn{
-    width:34px;height:34px;border-radius:50%;border:1px solid rgba(176,141,87,.4);
-    background:rgba(255,255,255,.5);color:var(--gold);cursor:pointer;font-size:15px;
+    width:38px;height:38px;flex:none;border-radius:50%;border:1px solid rgba(176,141,87,.4);
+    background:rgba(255,255,255,.5);color:var(--gold);cursor:pointer;font-size:16px;
     display:flex;align-items:center;justify-content:center;transition:.2s;
   }
-  .slot-btn:active{transform:scale(.88);background:var(--gold-soft)}
-  .lottery-tag{
-    font-size:10px;color:var(--gold);letter-spacing:2px;font-weight:600;
-    opacity:0;transform:translateY(4px);transition:.4s;
+  .slot-btn:active{transform:scale(.85);background:var(--gold-soft)}
+  .slot-btn.on{background:linear-gradient(135deg,#d8b877,#b08d57);color:#fff;box-shadow:0 4px 14px rgba(176,141,87,.4)}
+  .meal-detail{max-height:0;overflow:hidden;transition:max-height .4s ease}
+  .meal-detail.open{max-height:320px;margin-top:12px}
+  .nu-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .chip{
+    font-size:11px;padding:4px 10px;border-radius:99px;letter-spacing:.5px;
+    background:linear-gradient(135deg,var(--gold-soft),var(--lav-soft));
+    color:#7a5a2e;border:1px solid rgba(176,141,87,.25);
   }
-  .lottery-tag.show{opacity:1;transform:none}
+  .recipe{
+    font-size:12.5px;line-height:1.8;color:#6b5f6e;margin-top:10px;
+    background:rgba(255,255,255,.5);border-radius:12px;padding:10px 12px;
+    border:1px dashed rgba(176,141,87,.35);
+  }
+  .recipe b{color:var(--gold);font-weight:700}
+  .toggle-row{display:flex;align-items:center;gap:8px;margin-top:10px}
+  .toggle-detail{
+    border:none;background:transparent;color:var(--gold);font-size:12px;cursor:pointer;
+    letter-spacing:1px;padding:4px 0;
+  }
+  .lottery-tag{
+    font-size:10.5px;color:var(--gold);letter-spacing:2px;font-weight:600;
+    opacity:0;transition:.4s;
+  }
+  .lottery-tag.show{opacity:1}
   .bottom-actions{display:flex;gap:10px;margin-top:18px}
   .btn{
     flex:1;border:none;cursor:pointer;border-radius:14px;padding:13px 0;font-size:14px;font-weight:600;
     letter-spacing:2px;transition:.2s;
   }
   .btn:active{transform:scale(.97)}
-  .btn-gold{
-    background:linear-gradient(135deg,#d8b877,#b08d57);color:#fff;
-    box-shadow:0 8px 24px rgba(176,141,87,.4);
-  }
-  .btn-ghost{
-    background:var(--card);color:var(--muted);border:1px solid var(--line);
-    box-shadow:0 4px 14px rgba(120,90,40,.08);
-  }
+  .btn-gold{background:linear-gradient(135deg,#d8b877,#b08d57);color:#fff;box-shadow:0 8px 24px rgba(176,141,87,.4)}
+  .btn-ghost{background:var(--card);color:var(--muted);border:1px solid var(--line);box-shadow:0 4px 14px rgba(120,90,40,.08)}
   .btn:disabled{opacity:.35;cursor:not-allowed;transform:none!important}
-
   .tip{
     background:linear-gradient(135deg,rgba(243,231,210,.9),rgba(237,232,247,.9));
     border:1px solid rgba(176,141,87,.25);border-radius:14px;padding:12px 14px;
     font-size:12.5px;color:#7a5a2e;margin-top:16px;line-height:1.8;letter-spacing:.5px;
   }
-
-  .calendar-wrap{background:var(--card);backdrop-filter:blur(14px);border:1px solid var(--line);
-    border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
-  .cal-head-row{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px}
-  .cal-head{text-align:center;font-size:11px;color:var(--muted);padding:4px 0;letter-spacing:2px}
-  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-  .cal-cell{
-    background:rgba(247,243,238,.8);border:1px solid rgba(176,141,87,.15);border-radius:9px;
-    padding:5px 3px;min-height:58px;cursor:pointer;text-align:center;transition:.15s;
-  }
-  .cal-cell:active{transform:scale(.95)}
-  .cal-cell.today{
-    border-color:var(--gold);background:linear-gradient(135deg,var(--gold-soft),var(--lav-soft));
-    box-shadow:0 0 0 2px rgba(176,141,87,.35);
-  }
-  .cal-cell.empty{background:transparent;border:none;cursor:default}
-  .cal-num{font-size:12px;font-weight:700}
-  .cal-cell.today .cal-num{color:var(--gold)}
-  .cal-dish{font-size:9.5px;color:var(--muted);line-height:1.45;margin-top:2px;word-break:break-all}
-  .cal-dish b{color:var(--ink);font-weight:600}
-  .cal-input-row{display:flex;gap:8px;margin-bottom:14px;align-items:center}
-  .cal-input-row label{font-size:12px;color:var(--muted);letter-spacing:2px;flex:none}
-  .cal-input-row input{
-    flex:1;border:1px solid var(--line);border-radius:12px;padding:9px 12px;font-size:13px;
-    background:rgba(255,255,255,.6);color:var(--ink);font-family:inherit;
-  }
-
   .share-btn{
     display:block;width:100%;margin-top:16px;padding:14px;border:none;border-radius:14px;
     background:linear-gradient(135deg,#8e7cc3,#b08d57);color:#fff;font-size:15px;font-weight:700;
     letter-spacing:3px;cursor:pointer;box-shadow:0 10px 30px rgba(142,124,195,.35);transition:.2s;
   }
   .share-btn:active{transform:scale(.98)}
-  .footer{text-align:center;font-size:12px;color:var(--muted);margin-top:24px;line-height:2;padding:0 24px}
-  .footer .sign{color:var(--gold);letter-spacing:4px}
+  .toast{
+    position:fixed;left:50%;bottom:calc(36px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);
+    background:rgba(46,42,51,.92);color:#fff;font-size:13px;letter-spacing:1px;
+    padding:11px 20px;border-radius:99px;opacity:0;pointer-events:none;transition:.3s;z-index:99;
+    box-shadow:0 8px 28px rgba(0,0,0,.25);max-width:82%;text-align:center;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
 
 <div class="header">
-  <div class="crown">⚖️ L I B R A</div>
+  <div class="crown">♎ · L I B R A</div>
   <h1>三餐签筒</h1>
   <div class="sub">今日宜食 · 抽一支好签</div>
   <div class="date-chip" id="dateChip"></div>
 </div>
 
-<div class="tabs">
-  <button class="tab active" id="tabDraw" onclick="switchView('draw')">🎋 抽签</button>
-  <button class="tab" id="tabToday" onclick="switchView('today')">📜 今日菜单</button>
-  <button class="tab" id="tabCal" onclick="switchView('calendar')">🗓 整月</button>
-</div>
-
-<div class="view active" id="viewDraw">
+<div class="wrap">
   <div class="draw-wrap">
     <div class="draw-hint" id="drawHint">心诚则灵 · 轻轻一按</div>
     <button class="draw-btn" id="drawBtn" onclick="doDraw()">抽 签<small>三餐定数</small><span class="shaking-text">摇 签 中</span></button>
   </div>
+
   <div class="meals" id="mealList"></div>
+
   <div class="bottom-actions" id="bottomActions" style="display:none">
     <button class="btn btn-ghost" id="undoBtn" onclick="undoDraw()" disabled>↩ 反悔</button>
     <button class="btn btn-ghost" onclick="redrawAll()">🔄 全部重抽</button>
   </div>
+
   <div class="tip" id="drawTip"></div>
+
   <button class="share-btn" onclick="shareToday()">📤 分享今日食谱</button>
 </div>
 
-<div class="view" id="viewToday">
-  <div class="tip">📜 这是为你排好的「30 天不重复」定数菜单,今日第 <b id="dayNum">1</b> 天</div>
-  <div id="planList"></div>
-</div>
-
-<div class="view" id="viewCalendar">
-  <div class="calendar-wrap">
-    <div class="cal-input-row">
-      <label>跳转</label>
-      <input type="date" id="dateInput" onchange="jumpToDate(this.value)">
-    </div>
-    <div class="cal-head-row" id="calHeadRow"></div>
-    <div class="cal-grid" id="calGrid"></div>
-  </div>
-  <div class="tip">🗓 点击任意日期查看当天定数菜单;金色高亮为今天。抽签结果与定数互不影响。</div>
-</div>
-
-
+<div class="toast" id="toast"></div>
 
 <script>
 var MEALS = {
   breakfast: [
-    "豆浆油条","小笼包","皮蛋瘦肉粥","煎饼果子","葱油拌面","茶叶蛋+馒头","豆腐脑","鸡蛋灌饼",
-    "肠粉","鲜肉馄饨","韭菜盒子","奶黄包+牛奶","火腿三明治","燕麦粥+水果","蒸饺","烧麦",
-    "粢饭团","蛋炒饭","桂林米粉","牛肉汉堡","玉米粥+咸菜","吐司煎蛋","锅贴","酒酿小圆子",
-    "寿司便当","荞麦冷面","肉夹馍","面包+酸奶","疙瘩汤","紫薯粥+包子"
+    {n:"鲜肉小笼包",s:"配 豆浆 · 凉拌菠菜",nu:["蛋白18g","碳水45g","纤维4g"],r:"和面醒发,肉末加葱姜调料拌匀,擀皮包小褶,上笼蒸8分钟;菠菜焯水拌香醋。"},
+    {n:"燕麦牛奶粥",s:"配 水煮蛋 · 蓝莓",nu:["蛋白15g","碳水40g","维生素C"],r:"燕麦片加水小火煮5分钟,倒入牛奶微沸;鸡蛋煮7分钟,蓝莓洗净点缀。"},
+    {n:"皮蛋瘦肉粥",s:"配 黄瓜条 · 小油条",nu:["蛋白16g","碳水42g","纤维3g"],r:"大米熬至开花,加腌好的肉丝和皮蛋丁煮3分钟,白胡椒调味;黄瓜拍碎拌蒜。"},
+    {n:"煎饼果子",s:"配 无糖酸奶 · 苹果片",nu:["蛋白14g","碳水48g","膳食纤维"],r:"绿豆面调糊摊薄饼,磕蛋抹开撒葱花芝麻,翻面刷酱,夹生菜脆饼卷起。"},
+    {n:"鸡蛋灌饼",s:"配 小米粥 · 圣女果",nu:["蛋白16g","碳水40g","维生素A"],r:"面团擀片抹油,煎至鼓起灌入蛋液,翻面烙熟,卷生菜刷酱;小米粥配圣女果。"},
+    {n:"广式肠粉",s:"配 瘦肉粥 · 白灼生菜",nu:["蛋白15g","碳水45g","纤维3g"],r:"米浆摊盘蒸1分钟,铺蛋液虾仁再蒸,卷起淋豉油;生菜焯水淋蒸鱼豉油。"},
+    {n:"豆腐脑",s:"配 芝麻烧饼 · 猕猴桃",nu:["蛋白12g","碳水50g","维生素C"],r:"内酯豆腐蒸热,浇香菇木耳卤,点香油辣椒油;烧饼夹芝麻酱,配猕猴桃。"},
+    {n:"鲜肉馄饨",s:"配 煎蛋 · 小番茄",nu:["蛋白18g","碳水42g","纤维2g"],r:"馄饨皮包肉馅捏紧,紫菜虾皮冲汤底,煮2分钟盛出点香油;煎蛋配小番茄。"},
+    {n:"韭菜盒子",s:"配 玉米糊 · 橙子",nu:["蛋白10g","碳水46g","维生素C"],r:"韭菜切碎拌炒蛋粉丝,烫面皮包半月形,平底锅少油煎至两面金黄。"},
+    {n:"虾仁蒸饺",s:"配 牛奶 · 水蜜桃",nu:["蛋白16g","碳水38g","钙"],r:"虾仁剁粒拌肉馅,饺皮包柳叶褶,大火蒸8分钟;牛奶温热配水蜜桃。"},
+    {n:"葱油拌面",s:"配 溏心蛋 · 葡萄",nu:["蛋白13g","碳水52g","钾"],r:"小葱炸至焦黄,淋酱油糖熬葱油;面条煮好拌油撒葱花;溏心蛋对半切。"},
+    {n:"火腿三明治",s:"配 美式咖啡 · 哈密瓜",nu:["蛋白14g","碳水40g","纤维2g"],r:"全麦吐司夹煎蛋生菜火腿,对角切开;咖啡配哈密瓜丁。"},
+    {n:"燕麦苹果粥",s:"配 坚果 · 低脂奶",nu:["蛋白12g","碳水45g","膳食纤维"],r:"燕麦加水煮开,放苹果丁和肉桂粉小火5分钟,撒核桃碎。"},
+    {n:"糯米烧麦",s:"配 紫菜蛋汤 · 梨",nu:["蛋白14g","碳水44g","铁"],r:"糯米提前蒸熟拌香菇肉丁酱油,饺子皮捏成烧麦形,蒸8分钟;蛋汤配梨。"},
+    {n:"粢饭团",s:"配 豆浆 · 草莓",nu:["蛋白13g","碳水50g","维生素C"],r:"糯米饭摊开,夹油条肉松咸蛋黄卷紧切段;豆浆配草莓。"},
+    {n:"奶香吐司",s:"配 水煮蛋 · 牛油果",nu:["蛋白15g","碳水38g","不饱和脂肪"],r:"吐司烤脆抹黄油;鸡蛋煮7分钟;牛油果压泥抹面包。"},
+    {n:"荞麦冷面",s:"配 卤蛋 · 西瓜",nu:["蛋白14g","碳水46g","纤维5g"],r:"荞麦面煮好过凉,浇酸甜冷面汤,摆黄瓜丝卤蛋;西瓜解暑。"},
+    {n:"猪肉锅贴",s:"配 红枣粥 · 猕猴桃",nu:["蛋白16g","碳水48g","维生素C"],r:"肉馅拌白菜末,饺皮包长条,平底锅煎至底焦脆,加水焖熟收干。"},
+    {n:"奶黄包",s:"配 杂粮豆浆 · 火龙果",nu:["蛋白12g","碳水50g","纤维4g"],r:"奶黄馅提前炒好,发面包制,醒发后蒸10分钟;豆浆配火龙果。"},
+    {n:"蛋炒饭",s:"配 紫菜汤 · 小番茄",nu:["蛋白15g","碳水52g","纤维2g"],r:"隔夜饭炒散,蛋液滑炒,加火腿丁豌豆胡萝卜,生抽调味。"},
+    {n:"玉米碴粥",s:"配 咸鸭蛋 · 拍黄瓜",nu:["蛋白11g","碳水44g","膳食纤维"],r:"玉米碴洗净煮40分钟至粘稠;咸鸭蛋对半切;黄瓜拍蒜。"},
+    {n:"吐司煎蛋",s:"配 希腊酸奶 · 蓝莓",nu:["蛋白17g","碳水40g","抗氧化"],r:"吐司挖孔煎蛋,双面煎至金黄;酸奶淋蜂蜜拌蓝莓。"},
+    {n:"酒酿小圆子",s:"配 茶叶蛋 · 橙子",nu:["蛋白12g","碳水42g","维生素C"],r:"糯米圆子煮至浮起,加酒酿和枸杞煮开勾薄芡;茶叶蛋配橙子。"},
+    {n:"腊汁肉夹馍",s:"配 南瓜粥 · 西瓜",nu:["蛋白18g","碳水48g","纤维3g"],r:"五花肉卤2小时剁碎,青椒香菜拌匀,夹入烤脆的馍。"},
+    {n:"鸡蛋汉堡",s:"配 牛奶 · 苹果",nu:["蛋白16g","碳水44g","钙"],r:"面糊倒入模具,加蛋加肉末,煎至两面金黄微焦。"},
+    {n:"西红柿疙瘩汤",s:"配 酱牛肉 · 香蕉",nu:["蛋白15g","碳水40g","钾"],r:"面粉加水拌小疙瘩;西红柿炒出汁加水煮开,下面疙瘩和蛋花。"},
+    {n:"紫薯粥",s:"配 奶黄包 · 葡萄",nu:["蛋白10g","碳水46g","花青素"],r:"紫薯切丁与大米同煮30分钟搅匀成粥,配热过的奶黄包。"},
+    {n:"培根煎蛋",s:"配 烤吐司 · 橙汁",nu:["蛋白18g","碳水38g","维生素C"],r:"培根小火煎脆,鸡蛋煎太阳蛋,吐司烤至金黄,配鲜榨橙汁。"},
+    {n:"鲜鱼片粥",s:"配 油条 · 拌黄瓜",nu:["蛋白16g","碳水42g","DHA"],r:"大米煮开花,下腌制鱼片烫熟,撒姜丝葱花白胡椒。"},
+    {n:"牛肉包子",s:"配 小米粥 · 梨",nu:["蛋白17g","碳水46g","纤维3g"],r:"牛肉馅加洋葱酱油调味,发面包制,蒸12分钟;小米粥配梨。"}
   ],
   lunch: [
-    "宫保鸡丁盖饭","红烧牛肉面","麻辣香锅","黄焖鸡米饭","兰州拉面","番茄炒蛋盖饭","炸酱面",
-    "扬州炒饭","酸辣粉","鱼香肉丝盖饭","沙县拌面+炖汤","生煎包+牛肉汤","腊味煲仔饭","麻酱凉皮",
-    "蛋包饭","螺蛳粉","石锅拌饭","热干面","隆江猪脚饭","咖喱鸡饭","过桥米线","肉末茄子饭",
-    "土豆牛肉盖饭","重庆小面","烧鸭饭","咖喱猪排饭","砂锅排骨饭","西红柿鸡蛋面","蜜汁叉烧饭","冒菜"
+    {n:"宫保鸡丁",s:"配 杂粮饭 · 蒜蓉西兰花 · 冬瓜汤",nu:["蛋白28g","碳水60g","纤维6g"],r:"鸡丁上浆滑油,干辣椒花生爆香,糖醋汁勾芡裹匀;西兰花焯水拌蒜蓉。"},
+    {n:"红烧牛肉面",s:"配 卤蛋 · 烫青菜",nu:["蛋白30g","碳水65g","铁"],r:"牛腩焯水炒糖色,加香料炖1.5小时,浇在面上,配卤蛋青菜。"},
+    {n:"番茄鱼片",s:"配 米饭 · 清炒时蔬 · 海带汤",nu:["蛋白26g","碳水58g","维生素C"],r:"鱼片上浆滑熟;番茄炒出沙加水,鱼片回锅煮2分钟;时蔬快炒。"},
+    {n:"黄焖鸡",s:"配 米饭 · 凉拌木耳 · 紫菜汤",nu:["蛋白27g","碳水55g","纤维5g"],r:"鸡块煸炒,加香菇土豆青椒,生抽老抽焖15分钟收汁。"},
+    {n:"清蒸鲈鱼",s:"配 糙米饭 · 白灼菜心 · 萝卜汤",nu:["蛋白29g","碳水50g","DHA"],r:"鲈鱼抹盐摆姜,水开蒸8分钟,豉油葱丝热油浇上;菜心焯水。"},
+    {n:"香煎鸡胸",s:"配 藜麦饭 · 烤彩椒 · 菌菇汤",nu:["蛋白32g","碳水45g","纤维7g"],r:"鸡胸腌制15分钟,小火煎至金黄;彩椒烤软;菌菇煮汤。"},
+    {n:"麻婆豆腐",s:"配 米饭 · 清炒油麦菜 · 番茄蛋汤",nu:["蛋白22g","碳水52g","纤维4g"],r:"豆腐焯水;豆瓣酱炒红油,下豆腐烧5分钟,撒花椒面;油麦菜快炒。"},
+    {n:"西芹虾仁",s:"配 米饭 · 凉拌藕片 · 冬瓜汤",nu:["蛋白25g","碳水50g","纤维5g"],r:"虾仁上浆滑炒,西芹切段同炒,盐白胡椒调味;藕片焯水拌。"},
+    {n:"土豆炖牛腩",s:"配 米饭 · 焯拌菠菜 · 酸辣汤",nu:["蛋白28g","碳水58g","钾"],r:"牛腩焯水炖1小时,下土豆块再炖20分钟收汁;菠菜焯水拌。"},
+    {n:"红烧排骨",s:"配 米饭 · 蒜蓉芥蓝 · 紫菜蛋汤",nu:["蛋白26g","碳水55g","钙"],r:"排骨煎至微黄,糖色酱油翻炒,加水炖40分钟;芥蓝焯水拌蒜蓉。"},
+    {n:"清炒时蔬盖饭",s:"配 蒸蛋羹 · 苹果",nu:["蛋白18g","碳水55g","纤维6g"],r:"时蔬快炒保持脆嫩,盖在米饭上;蛋羹蒸10分钟淋豉油。"},
+    {n:"香菇滑鸡",s:"配 米饭 · 炒芦笋 · 山药汤",nu:["蛋白27g","碳水52g","纤维5g"],r:"鸡腿肉切块,香菇同蒸15分钟,汤汁淋在饭上;芦笋快炒。"},
+    {n:"白灼虾",s:"配 米饭 · 蚝油生菜 · 豆腐汤",nu:["蛋白30g","碳水48g","硒"],r:"水开下虾煮2分钟,姜醋汁蘸食;生菜焯水淋蚝油。"},
+    {n:"红烧茄子",s:"配 二米饭 · 拍黄瓜 · 番茄汤",nu:["蛋白15g","碳水56g","纤维6g"],r:"茄子煎软,蒜末酱油糖调味收汁装盘;黄瓜拍碎拌蒜。"},
+    {n:"清蒸鳕鱼",s:"配 米饭 · 炒娃娃菜 · 冬瓜汤",nu:["蛋白27g","碳水50g","DHA"],r:"鳕鱼抹盐姜丝蒸7分钟,豉油热油激香;娃娃菜快炒。"},
+    {n:"柠檬鸡胸",s:"配 藜麦饭 · 烤时蔬",nu:["蛋白33g","碳水42g","维生素C"],r:"鸡胸煎熟切片挤柠檬汁;时蔬加橄榄油烤软。"},
+    {n:"鱼香肉丝",s:"配 米饭 · 焯拌莴笋 · 紫菜汤",nu:["蛋白24g","碳水54g","纤维4g"],r:"肉丝上浆滑炒,泡椒木耳笋丝同炒,鱼香汁裹匀;莴笋焯水拌。"},
+    {n:"番茄炒蛋",s:"配 米饭 · 清炒小白菜 · 冬瓜排骨汤",nu:["蛋白20g","碳水56g","维生素C"],r:"蛋滑炒出锅;番茄炒出沙,回锅加糖盐浇在米饭上;小白菜快炒。"},
+    {n:"虾仁蒸蛋盖饭",s:"配 凉拌海带丝 · 菌菇汤",nu:["蛋白24g","碳水50g","碘"],r:"蛋液蒸7分钟摆虾仁再蒸2分钟,淋豉油盖饭;海带丝拌蒜醋。"},
+    {n:"黑椒牛柳",s:"配 米饭 · 蒜蓉西兰花 · 蛋花汤",nu:["蛋白30g","碳水52g","纤维5g"],r:"牛柳滑油,洋葱彩椒爆炒,黑椒汁翻炒收汁;西兰花焯水拌蒜。"},
+    {n:"蚝油牛肉",s:"配 米饭 · 上汤娃娃菜 · 萝卜汤",nu:["蛋白28g","碳水50g","锌"],r:"牛肉上浆滑炒,西兰花焯水同炒,蚝油芡汁裹匀;娃娃菜煮汤。"},
+    {n:"蒜香排骨",s:"配 杂粮饭 · 清炒豆苗 · 海带汤",nu:["蛋白26g","碳水54g","纤维4g"],r:"排骨腌制小火炸至金黄,蒜末爆香翻炒;豆苗快炒。"},
+    {n:"清汤狮子头",s:"配 米饭 · 焯拌菠菜 · 玉米汤",nu:["蛋白25g","碳水50g","纤维5g"],r:"肉末摔打上劲,小火清汤炖1小时;菠菜焯水拌。"},
+    {n:"橙香鸭腿",s:"配 米饭 · 清炒荷兰豆 · 冬瓜汤",nu:["蛋白27g","碳水52g","维生素C"],r:"鸭腿煎香,橙汁糖醋汁焖烧20分钟;荷兰豆快炒。"},
+    {n:"豉汁蒸鸡",s:"配 米饭 · 白灼秋葵 · 番茄蛋汤",nu:["蛋白28g","碳水50g","膳食纤维"],r:"鸡块拌豆豉姜蒜,大火蒸15分钟;秋葵焯水淋豉油。"},
+    {n:"番茄牛腩",s:"配 米饭 · 凉拌黄瓜 · 紫菜虾皮汤",nu:["蛋白29g","碳水54g","番茄红素"],r:"牛腩炖1小时,加番茄再炖20分钟,汤浓味醇;黄瓜拍蒜。"},
+    {n:"香煎三文鱼",s:"配 杂粮饭 · 芦笋 · 蘑菇汤",nu:["蛋白31g","碳水45g","Omega-3"],r:"三文鱼抹盐黑胡椒,煎至两面金黄;芦笋煎软;蘑菇煮汤。"},
+    {n:"山药炒肉片",s:"配 米饭 · 凉拌木耳 · 冬瓜汤",nu:["蛋白23g","碳水53g","膳食纤维"],r:"山药切片焯水,肉片上浆滑炒,同炒勾薄芡;木耳拌醋。"},
+    {n:"葱爆牛肉",s:"配 米饭 · 蒜蓉菠菜 · 番茄汤",nu:["蛋白29g","碳水52g","铁"],r:"牛肉片大火快炒,大葱段爆香,生抽蚝油调味;菠菜焯水拌蒜。"},
+    {n:"木须肉",s:"配 米饭 · 清炒油菜 · 紫菜汤",nu:["蛋白24g","碳水55g","纤维4g"],r:"肉丝滑炒,鸡蛋木耳黄瓜同炒,勾薄芡出锅;油菜快炒。"}
   ],
   dinner: [
-    "牛油火锅","水煮鱼","烤鱼","新疆大盘鸡","酸菜鱼","韩式烤肉","麻辣小龙虾","日式拉面",
-    "寿喜锅","麻辣烫","披萨","肉酱意面","香煎牛排","铁板鱿鱼","潮汕砂锅粥","椰子鸡火锅",
-    "猪肚鸡","港式打边炉","炸鸡+啤酒","芝士汉堡+薯条","卤味拼盘+米饭","台式卤肉饭","汽锅鸡",
-    "日式铁板烧","关东煮","部队锅","冬阴功汤","越南河粉","干锅牛蛙","清蒸鲈鱼+米饭"
+    {n:"冬瓜排骨汤",s:"配 玉米段 · 凉拌黄瓜",nu:["蛋白22g","碳水35g","钾"],r:"排骨焯水,与冬瓜姜片同炖40分钟,盐调味;玉米切段同煮。"},
+    {n:"清蒸鲈鱼",s:"配 小米粥 · 白灼西蓝花",nu:["蛋白26g","碳水30g","DHA"],r:"鲈鱼抹盐摆姜丝,水开蒸8分钟,淋蒸鱼豉油,葱丝热油浇上。"},
+    {n:"番茄豆腐汤",s:"配 荞麦面 · 凉拌海带",nu:["蛋白18g","碳水42g","维生素C"],r:"番茄炒出沙加水,豆腐切块煮5分钟,蛋花淋入点香油。"},
+    {n:"香菇青菜",s:"配 山药粥 · 蒸南瓜",nu:["蛋白12g","碳水38g","膳食纤维"],r:"香菇泡发切片,与上海青爆炒,蚝油调味;南瓜蒸熟。"},
+    {n:"清炒虾仁",s:"配 杂粮粥 · 焯拌芦笋",nu:["蛋白24g","碳水32g","硒"],r:"虾仁上浆滑炒,加芦笋段快速翻炒,盐和白胡椒调味。"},
+    {n:"苦瓜炒蛋",s:"配 藜麦饭 · 冬瓜汤",nu:["蛋白16g","碳水34g","维生素C"],r:"苦瓜切片盐腌去苦,与炒蛋同炒,清淡微苦解腻。"},
+    {n:"上汤娃娃菜",s:"配 红薯粥 · 白灼虾",nu:["蛋白20g","碳水36g","叶酸"],r:"娃娃菜对半焯水,皮蛋咸蛋煮汤浇上,撒枸杞;虾煮2分钟。"},
+    {n:"凉拌鸡丝",s:"配 绿豆粥 · 蒸紫薯",nu:["蛋白25g","碳水38g","纤维5g"],r:"鸡胸煮熟撕丝,配黄瓜丝,淋麻酱蒜汁;紫薯蒸熟。"},
+    {n:"豆腐菌菇煲",s:"配 糙米饭 · 清炒时蔬",nu:["蛋白17g","碳水40g","纤维6g"],r:"豆腐煎黄,与各类菌菇同炖10分钟,胡椒调味。"},
+    {n:"牛腩萝卜汤",s:"配 玉米段 · 凉拌木耳",nu:["蛋白23g","碳水33g","纤维5g"],r:"牛腩焯水炖1小时,加萝卜再炖20分钟,撒香菜;木耳拌醋。"},
+    {n:"蒸三鲜",s:"配 小米粥 · 炒芥蓝",nu:["蛋白19g","碳水30g","钙"],r:"蛋液打散蒸7分钟,摆虾仁豆腐再蒸3分钟,淋豉油。"},
+    {n:"山药木耳",s:"配 南瓜粥 · 白灼基围虾",nu:["蛋白18g","碳水36g","膳食纤维"],r:"山药切片与泡发木耳同炒,勾薄芡,清淡爽脆;虾煮2分钟。"},
+    {n:"番茄龙利鱼",s:"配 杂粮饭 · 凉拌秋葵",nu:["蛋白22g","碳水38g","维生素C"],r:"鱼块煎至微黄,番茄炒软加水,鱼片再煮2分钟;秋葵焯水拌。"},
+    {n:"西兰花炒鸡丁",s:"配 薏米粥 · 凉拌海带丝",nu:["蛋白26g","碳水34g","纤维6g"],r:"鸡胸丁上浆滑炒,西兰花焯水同炒,蚝油调味。"},
+    {n:"丝瓜炒蛋",s:"配 糙米饭 · 冬瓜汤",nu:["蛋白15g","碳水32g","维生素C"],r:"丝瓜去皮切片,与炒蛋同炒,盐调味出锅点香油。"},
+    {n:"清蒸豆腐",s:"配 燕麦粥 · 焯拌菠菜",nu:["蛋白16g","碳水36g","钙"],r:"嫩豆腐切块,铺香菇肉末蒸10分钟,淋豉油葱丝;菠菜焯水拌。"},
+    {n:"萝卜丝鲫鱼汤",s:"配 全麦馒头 · 凉拌莴笋",nu:["蛋白21g","碳水34g","锌"],r:"鲫鱼煎至两面金黄,加开水煮白,放萝卜丝再煮10分钟。"},
+    {n:"蒜蓉蒸虾",s:"配 杂粮粥 · 清炒豆芽",nu:["蛋白24g","碳水32g","硒"],r:"虾开背去线,铺蒜蓉蒸6分钟,热油淋葱花;豆芽快炒。"},
+    {n:"白菜豆腐煲",s:"配 红薯饭 · 凉拌西葫芦",nu:["蛋白14g","碳水40g","纤维5g"],r:"白菜垫底,豆腐香菇码入,小火煲15分钟;西葫芦拌蒜。"},
+    {n:"荷塘小炒",s:"配 小米南瓜粥 · 蒸蛋",nu:["蛋白13g","碳水38g","膳食纤维"],r:"藕片山药荷兰豆木耳同炒,盐和少许糖调味。"},
+    {n:"芦笋虾仁面",s:"配 凉拌木耳",nu:["蛋白23g","碳水44g","纤维5g"],r:"荞麦面煮熟,虾仁芦笋炒好铺面,浇清汤。"},
+    {n:"冬瓜蛤蜊汤",s:"配 杂粮饭 · 白灼菜心",nu:["蛋白19g","碳水36g","钾"],r:"冬瓜煮至半透明,下蛤蜊煮至开口,撒葱花白胡椒。"},
+    {n:"番茄疙瘩汤",s:"配 蒸南瓜 · 焯拌菠菜",nu:["蛋白14g","碳水40g","维生素C"],r:"西红柿炒出沙加水,面疙瘩边拌边下,蛋花淋入。"},
+    {n:"清蒸鳕鱼",s:"配 山药粥 · 清炒荷兰豆",nu:["蛋白25g","碳水30g","DHA"],r:"鳕鱼抹盐姜丝,水开蒸7分钟,淋豉油热油激香;荷兰豆快炒。"},
+    {n:"秋葵蒸蛋",s:"配 玉米粥 · 凉拌三丝",nu:["蛋白15g","碳水34g","膳食纤维"],r:"蛋液过筛蒸6分钟,摆焯水秋葵片再蒸2分钟,淋豉油。"},
+    {n:"香菇豆腐羹",s:"配 糙米饭 · 清炒油麦菜",nu:["蛋白16g","碳水38g","纤维5g"],r:"香菇豆腐切丁煮开,水淀粉勾芡,蛋花撒葱花;油麦菜快炒。"},
+    {n:"白灼虾",s:"配 小米粥 · 凉拌藕片",nu:["蛋白23g","碳水32g","硒"],r:"水开下虾煮2分钟,蘸姜醋汁;藕片焯水拌醋。"},
+    {n:"时蔬鸡蛋饼",s:"配 南瓜粥 · 凉拌黄瓜",nu:["蛋白16g","碳水40g","纤维4g"],r:"面糊拌时蔬碎和蛋液,小火摊成软饼,蘸蒜汁。"},
+    {n:"清汤云吞",s:"配 蒸红薯 · 白灼西蓝花",nu:["蛋白18g","碳水42g","纤维5g"],r:"云吞煮熟,紫菜虾皮冲汤底,点香油;红薯蒸熟。"},
+    {n:"鸡肉丸汤",s:"配 杂粮饭 · 凉拌秋葵",nu:["蛋白24g","碳水36g","膳食纤维"],r:"鸡肉剁泥搅打上劲,虎口挤丸煮至浮起,配青菜。"}
   ]
 };
 var CYCLE = 30;
 var EPOCH = new Date(2026, 0, 1);
 var today = new Date(); today.setHours(0,0,0,0);
-var cur = today;
 
 var HISTORY_KEY = "sancan_history_v1";
 var DRAWN_KEY = "sancan_drawn_v1";
 var drawn = loadJSON(DRAWN_KEY, {breakfast:null, lunch:null, dinner:null, date:null});
 var history = [];
 var rolling = false;
+var openDetail = {breakfast:false, lunch:false, dinner:false};
 
 function pad(n){return n<10?"0"+n:""+n}
 function fmtDate(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
@@ -297,55 +319,70 @@ function save(key, val){
 function usedPool(){
   var h = loadJSON(HISTORY_KEY, {breakfast:[],lunch:[],dinner:[]});
   if (drawn.date !== fmtDate(today)) {
-    drawn = {breakfast:null,lunch:null,dinner:null,date:fmtDate(today)};
+    drawn = {breakfast:null, lunch:null, dinner:null, date:fmtDate(today)};
     save(DRAWN_KEY, drawn);
   }
   return h;
 }
-function dayIndex(d){return Math.floor((d-EPOCH)/86400000)%CYCLE}
-function planOf(d){
-  var i = dayIndex(d), day = (i+CYCLE)%CYCLE+1;
-  return {day:day, b:MEALS.breakfast[day-1], l:MEALS.lunch[day-1], d:MEALS.dinner[day-1]};
-}
-function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
 function pick(slot, exclude){
-  var pool = MEALS[slot].filter(function(x){return exclude.indexOf(x)<0});
+  var pool = MEALS[slot].filter(function(x){return exclude.indexOf(x.n)<0});
   if (!pool.length) pool = MEALS[slot].slice();
   return pool[Math.floor(Math.random()*pool.length)];
 }
 function slotOf(k){return k==="breakfast"?"早餐":(k==="lunch"?"午餐":"晚餐")}
 function icoOf(k){return k==="breakfast"?"🌅":(k==="lunch"?"☀️":"🌙")}
+function toast(msg){
+  var t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(t._h);
+  t._h = setTimeout(function(){t.classList.remove("show")}, 2200);
+}
 
 function renderHeader(){
-  document.getElementById("dateChip").textContent = fmtCN(cur);
+  document.getElementById("dateChip").textContent = fmtCN(today);
 }
-function renderDrawView(){
-  var slots = ["breakfast","lunch","dinner"];
-  var list = document.getElementById("mealList");
-  var html = "";
-  slots.forEach(function(s){
-    var d = drawn[s];
-    html += '<div class="meal-card' + (d ? ' revealed' : '') + '" id="card-'+s+'">' +
+function cardHTML(s){
+  var d = drawn[s];
+  var isOpen = openDetail[s];
+  var chips = "";
+  if (d){
+    (d.nu||[]).forEach(function(c){chips += '<span class="chip">'+esc(c)+'</span>'});
+  }
+  return '<div class="meal-card' + (d?' revealed':'') + '" id="card-'+s+'">' +
+    '<div class="meal-top">' +
       '<div class="meal-ico">' + icoOf(s) + '</div>' +
       '<div class="meal-info">' +
-        '<div class="meal-time">' + slotOf(s) + ' · 第 ' + planOf(today).day + ' 日</div>' +
-        '<div class="meal-name' + (d ? '' : ' rolling') + '" id="name-'+s+'">' + (d ? esc(d) : "待抽") + '</div>' +
-        '<div class="lottery-tag' + (d ? ' show' : '') + '" id="tag-'+s+'">✨ 今日定数 · 反悔可得再签</div>' +
+        '<div class="meal-time">' + slotOf(s) + '</div>' +
+        '<div class="meal-name' + (d?'':' rolling') + '" id="name-'+s+'">' + (d?esc(d.n):"待抽") + '</div>' +
+        '<div class="meal-side' + (d?'':' rolling') + '" id="side-'+s+'">' + (d?esc(d.s):"配菜 · 营养 · 做法 抽签后揭晓") + '</div>' +
       '</div>' +
-      (d ? '<div class="meal-actions"><button class="slot-btn" onclick="redrawSlot(\''+s+'\')" title="重抽这一餐">↻</button></div>' : '') +
-    '</div>';
-  });
+      '<button class="slot-btn' + (d?' on':'') + '" id="slot-'+s+'" onclick="drawSlot(\''+s+'\')" title="'+(d?'重抽':'抽取')+'这一餐">↻</button>' +
+    '</div>' +
+    (d ? '<div class="meal-detail' + (isOpen?' open':'') + '" id="detail-'+s+'">' +
+      '<div class="nu-chips">' + chips + '</div>' +
+      '<div class="recipe"><b>做法</b> ' + esc(d.r) + '</div>' +
+    '</div>' : '') +
+    (d ? '<div class="toggle-row"><button class="toggle-detail" onclick="toggleDetail(\''+s+'\')">' + (isOpen?'收起做法 ▴':'看具体做法 ▾') + '</button>' +
+      '<span class="lottery-tag show">✨ 今日定数</span></div>' : '') +
+  '</div>';
+}
+function renderDrawView(){
+  var list = document.getElementById("mealList");
+  var html = "";
+  ["breakfast","lunch","dinner"].forEach(function(s){ html += cardHTML(s); });
   list.innerHTML = html;
   var done = drawn.breakfast && drawn.lunch && drawn.dinner;
   document.getElementById("bottomActions").style.display = done ? "flex" : "none";
   document.getElementById("undoBtn").disabled = !history.length;
   var hint = document.getElementById("drawHint");
   if (done){
-    hint.innerHTML = '🎉 三餐已定 · <b>天秤座</b>宜从容,勿再摇摆';
-    document.getElementById("drawTip").innerHTML = '💡 想反悔就点「反悔」退回上一签,或点某餐右侧的 ↻ 单独重抽。今天的签会留在手机里,刷新也不丢。';
+    hint.innerHTML = '🎉 三餐已定,去享用吧';
+    document.getElementById("drawTip").innerHTML = '💡 每餐右侧的 ↻ 可单独重抽;「反悔」退回上一签;「全部重抽」一键换全套。已抽的菜会存入本地,30 天内尽量不重复。';
   } else {
     hint.innerHTML = '心诚则灵 · 轻轻一按';
-    document.getElementById("drawTip").innerHTML = '💡 已抽的餐会存入本地,30 天内尽量不重复;「反悔」可退回上一签,天秤座的选择困难有救了。';
+    document.getElementById("drawTip").innerHTML = '💡 抽完的签会存入手机,刷新不丢;每餐可单独重抽,点菜名下方可看具体做法。';
   }
   document.getElementById("drawBtn").style.display = done ? "none" : "";
 }
@@ -357,61 +394,47 @@ function doDraw(){
   var slots = ["breakfast","lunch","dinner"].filter(function(s){return !drawn[s]});
   var h = usedPool();
   var picked = {};
-  slots.forEach(function(s){
-    picked[s] = pick(s, h[s]);
-  });
-  var names = {};
-  slots.forEach(function(s){
-    var el = document.getElementById("name-"+s);
-    if (el){ names[s] = el; el.classList.add("rolling"); }
-  });
-  var tick = 0;
+  slots.forEach(function(s){ picked[s] = pick(s, h[s]); });
   var timer = setInterval(function(){
-    tick++;
     slots.forEach(function(s){
-      if (names[s]){
-        var pool = MEALS[s];
-        names[s].textContent = pool[Math.floor(Math.random()*pool.length)];
-      }
+      var el = document.getElementById("name-"+s);
+      if (el) el.textContent = MEALS[s][Math.floor(Math.random()*MEALS[s].length)].n;
     });
-    if (tick >= 12){
+    if (++window._tick >= 12){
+      window._tick = 0;
       clearInterval(timer);
       btn.classList.remove("shaking");
       slots.forEach(function(s){
-        var el = names[s];
-        if (!el) return;
-        el.classList.remove("rolling");
-        el.textContent = picked[s];
-        var card = document.getElementById("card-"+s);
-        card.classList.add("revealed");
-        card.classList.add("roll");
-        setTimeout(function(){card.classList.remove("roll")}, 1700);
-        document.getElementById("tag-"+s).classList.add("show");
         drawn[s] = picked[s];
-        h[s].push(picked[s]);
+        h[s].push(picked[s].n);
         if (h[s].length > 24) h[s].shift();
-        history.push({slot:s, from:null, to:picked[s]});
+        history.push({slot:s, from:null, to:picked[s].n});
       });
       save(HISTORY_KEY, h);
       drawn.date = fmtDate(today);
       save(DRAWN_KEY, drawn);
       rolling = false;
       renderDrawView();
+      slots.forEach(function(s){
+        var card = document.getElementById("card-"+s);
+        card.classList.add("roll");
+        setTimeout(function(){card.classList.remove("roll")}, 1700);
+      });
     }
   }, 130);
 }
-function redrawSlot(s){
+function drawSlot(s){
   if (rolling) return;
   var h = usedPool();
   var prev = drawn[s];
-  var exclude = h[s].slice();
-  var next = pick(s, exclude);
+  var next = pick(s, h[s]);
   drawn[s] = next;
-  history.push({slot:s, from:prev, to:next});
-  h[s].push(next);
+  history.push({slot:s, from: prev ? prev.n : null, to: next.n});
+  h[s].push(next.n);
   if (h[s].length > 24) h[s].shift();
   save(HISTORY_KEY, h);
   save(DRAWN_KEY, drawn);
+  openDetail[s] = true;
   renderDrawView();
   var card = document.getElementById("card-"+s);
   card.classList.add("roll");
@@ -421,10 +444,12 @@ function undoDraw(){
   if (rolling || !history.length) return;
   var step = history.pop();
   var h = usedPool();
-  var ix = h[step.slot].lastIndexOf(step.to);
+  var ix = -1;
+  h[step.slot].forEach(function(x,i){ if (x===step.to && ix<0) ix = i; });
   if (ix >= 0) h[step.slot].splice(ix,1);
-  if (step.from) {
-    drawn[step.slot] = step.from;
+  if (step.from){
+    var m = MEALS[step.slot].filter(function(x){return x.n===step.from})[0];
+    drawn[step.slot] = m;
     h[step.slot].push(step.from);
   } else {
     drawn[step.slot] = null;
@@ -441,82 +466,52 @@ function redrawAll(){
     if (!prev) return;
     var next = pick(s, h[s].slice());
     drawn[s] = next;
-    history.push({slot:s, from:prev, to:next});
-    h[s].push(next);
+    history.push({slot:s, from:prev.n, to:next.n});
+    h[s].push(next.n);
     if (h[s].length > 24) h[s].shift();
   });
   save(HISTORY_KEY, h);
   save(DRAWN_KEY, drawn);
   renderDrawView();
 }
-function renderPlan(){
-  var p = planOf(today);
-  document.getElementById("dayNum").textContent = p.day;
-  var slots = [["🌅","早餐","b"],["☀️","午餐","l"],["🌙","晚餐","d"]];
-  var html = "";
-  slots.forEach(function(s){
-    html += '<div class="meal-card">' +
-      '<div class="meal-ico">' + s[0] + '</div>' +
-      '<div class="meal-info">' +
-        '<div class="meal-time">' + s[1] + ' · 07:00</div>' +
-        '<div class="meal-name">' + esc(p[s[2]]) + '</div>' +
-      '</div>' +
-    '</div>';
-  });
-  document.getElementById("planList").innerHTML = html;
+function toggleDetail(s){
+  openDetail[s] = !openDetail[s];
+  var det = document.getElementById("detail-"+s);
+  if (det) det.classList.toggle("open");
+  var card = document.getElementById("card-"+s);
+  var btn = card ? card.querySelector(".toggle-detail") : null;
+  if (btn) btn.textContent = openDetail[s] ? "收起做法 ▴" : "看具体做法 ▾";
 }
-function renderCalendar(){
-  var y = cur.getFullYear(), mo = cur.getMonth();
-  var first = new Date(y, mo, 1);
-  var dim = new Date(y, mo+1, 0).getDate();
-  var startDow = first.getDay();
-  var head = "";
-  for (var i=0;i<7;i++) head += '<div class="cal-head">'+["日","一","二","三","四","五","六"][i]+'</div>';
-  document.getElementById("calHeadRow").innerHTML = head;
-  var cells = "";
-  for (var i=0;i<startDow;i++) cells += '<div class="cal-cell empty"></div>';
-  for (var d=1;d<=dim;d++){
-    var dt = new Date(y, mo, d);
-    var p = planOf(dt);
-    var cls = "cal-cell" + (dt.toDateString()===today.toDateString() ? " today" : "");
-    cells += '<div class="cal-cell '+cls+'" onclick="pickDate(new Date('+y+','+mo+','+d+'))">' +
-      '<div class="cal-num">'+d+'</div>' +
-      '<div class="cal-dish"><b>早</b>'+esc(p.b)+'<br><b>午</b>'+esc(p.l)+'<br><b>晚</b>'+esc(p.d)+'</div>' +
-    '</div>';
-  }
-  document.getElementById("calGrid").innerHTML = cells;
-  document.getElementById("dateInput").value = fmtDate(cur);
-}
-function pickDate(d){ cur = d; switchView("calendar"); renderCalendar(); }
-function jumpToDate(v){
-  if (!v) return;
-  var p = v.split("-");
-  cur = new Date(+p[0], +p[1]-1, +p[2]);
-  renderCalendar();
-}
-function switchView(name){
-  ["draw","today","calendar"].forEach(function(n){
-    document.getElementById("tab"+cap(n)).className = "tab" + (n===name ? " active" : "");
-    document.getElementById("view"+cap(n)).className = "view" + (n===name ? " active" : "");
-  });
-  if (name==="calendar") renderCalendar();
-  if (name==="today") renderPlan();
-}
-function cap(s){return s.charAt(0).toUpperCase()+s.slice(1)}
 function shareToday(){
-  var p = planOf(today);
-  var l = ["🌅 早餐 "+p.b,"☀️ 午餐 "+p.l,"🌙 晚餐 "+p.d];
-  if (drawn.breakfast && drawn.lunch && drawn.dinner && drawn.date===fmtDate(today)){
-    l = ["🌅 早餐 "+drawn.breakfast,"☀️ 午餐 "+drawn.lunch,"🌙 晚餐 "+drawn.dinner];
-  }
-  var txt = "三餐签筒 · 今日签运 🎋\n\n" + l.join("\n") + "\n\n30天不重样: " + location.href;
+  var l = [];
+  ["breakfast","lunch","dinner"].forEach(function(s){
+    if (drawn[s]) l.push(icoOf(s)+" "+slotOf(s)+" "+drawn[s].n+" · "+drawn[s].s);
+  });
+  var txt = l.length ? "三餐签筒 · 今日食谱 🎋\n\n" + l.join("\n") + "\n\n30天不重样: " + location.href
+                    : "三餐签筒 · 今天抽个签,看看吃什么 🎋 " + location.href;
   if (navigator.share){
-    navigator.share({title:"三餐签筒", text:txt}).catch(function(){});
-  } else if (navigator.clipboard){
-    navigator.clipboard.writeText(txt).then(function(){alert("签文已复制,发给朋友吧 🎉")});
+    navigator.share({title:"今日食谱", text:txt}).catch(function(){copyText(txt);});
   } else {
-    prompt("复制签文:", txt);
+    copyText(txt);
   }
+}
+function copyText(t){
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(t).then(function(){toast("已复制,去粘贴吧 🎉")}).catch(function(){legacyCopy(t)});
+  } else {
+    legacyCopy(t);
+  }
+}
+function legacyCopy(t){
+  var ta = document.createElement("textarea");
+  ta.value = t;
+  ta.style.cssText = "position:fixed;left:-9999px;top:0;opacity:0";
+  document.body.appendChild(ta);
+  ta.select();
+  var ok = false;
+  try{ ok = document.execCommand("copy"); }catch(e){}
+  document.body.removeChild(ta);
+  toast(ok ? "已复制,去粘贴吧 🎉" : "复制失败,请长按手动复制链接: " + location.href);
 }
 renderHeader();
 renderDrawView();
