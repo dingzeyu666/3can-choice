@@ -181,7 +181,7 @@
   <h1>三餐签筒</h1>
   <div class="sub">今日宜食 · 抽一支好签</div>
   <div class="date-chip" id="dateChip"></div>
-  <div style="margin-top:8px;font-size:11px;color:rgba(176,141,87,.75);letter-spacing:2px">v8</div>
+  <div style="margin-top:8px;font-size:11px;color:rgba(176,141,87,.75);letter-spacing:2px">v9</div>
 </div>
 
 <div class="wrap">
@@ -416,7 +416,7 @@ var today = new Date(); today.setHours(0,0,0,0);
 
 var HISTORY_KEY = "sancan_history_v2";
 var DRAWN_KEY = "sancan_drawn_v2";
-var drawn = loadJSON(DRAWN_KEY, {breakfast:null, lunch:null, dinner:null, date:null});
+var drawn = {breakfast:null, lunch:null, dinner:null, date:fmtDate(today)};
 var undoStack = [];
 var rolling = false;
 var openDish = {breakfast:-1, lunch:-1, dinner:-1};
@@ -435,10 +435,6 @@ function save(key, val){
 }
 function usedPool(){
   var h = loadJSON(HISTORY_KEY, {breakfast:[],lunch:[],dinner:[]});
-  if (drawn.date !== fmtDate(today)) {
-    drawn = {breakfast:null, lunch:null, dinner:null, date:fmtDate(today)};
-    save(DRAWN_KEY, drawn);
-  }
   return h;
 }
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
@@ -541,8 +537,6 @@ function doDraw(){
         undoStack.push({slot:s, from:null, to:picked[s].n});
       });
       save(HISTORY_KEY, h);
-      drawn.date = fmtDate(today);
-      save(DRAWN_KEY, drawn);
       rolling = false;
       renderDrawView();
       slots.forEach(function(s){
